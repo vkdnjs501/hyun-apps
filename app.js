@@ -1,0 +1,613 @@
+/* Hyun-apps 1.0.0 — Progressive, framework-free portfolio controller. */
+(() => {
+  'use strict';
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const pad = (number) => String(number).padStart(2, '0');
+  const track = $('#projectTrack');
+  const body = document.body;
+  const root = document.documentElement;
+  const pref = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const STORE = 'hyun-apps:motion:v1';
+  const config = window.HYUN_APPS || {};
+  const visuals = window.HYUN_VISUALS || {};
+  const ids = new Set();
+  const projects = (Array.isArray(config.projects) ? config.projects : []).filter((p) => {
+    if (!p || !/^[a-z0-9][a-z0-9-]*$/i.test(p.id || '') || !p.title || ids.has(p.id)) return false;
+    ids.add(p.id);
+    return true;
+  });
+  let current = -1;
+  let offsets = [];
+  let frame = 0;
+  let animationFrame = 0;
+  let settleTimer = 0;
+  let toastTimer = 0;
+  let resizeFrame = 0;
+  let userPaused = false;
+  let reduced = pref.matches;
+  let cards = [];
+  let tabs = [];
+  let ambientLayers = [];
+  let isProgrammatic = false;
+  let drag = null;
+  let suppressClickUntil = 0;
+  let announceTimer = 0;
+  let wheelAccum = 0;
+  let wheelLast = 0;
+  let wheelLockUntil = 0;
+  let touchStarted = false;
+
+  try { userPaused = localStorage.getItem(STORE) === 'reduced'; } catch (_) { /* Private/restricted storage. */ }
+
+  /** Render text as text, never as user-supplied HTML. */
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = String(text);
+    return node;
+  }
+  function validLink(value) {
+    try {
+      const url = new URL(value);
+      return /^(https:|http:)$/.test(url.protocol) ? url.href : '';
+    } catch (_) { return ''; }
+  }
+  function safeImage(value) {
+    if (typeof value !== 'string' || !value.trim()) return '';
+    try {
+      const url = new URL(value, location.href);
+      if (/^(https:|http:|file:)$/.test(url.protocol)) return url.href;
+    } catch (_) { /* Invalid images fall back to the presentation visual. */ }
+    return '';
+  }
+  function color(value) {
+    return /^#[a-f0-9]{6}$/i.test(value || '') ? value : '#c7ee87';
+  }
+  function icon(kind = 'arrow') {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    node.setAttribute('viewBox', '0 0 24 24');
+    node.setAttribute('fill', 'none');
+    node.setAttribute('stroke', 'currentColor');
+    node.setAttribute('stroke-width', '1.6');
+    node.setAttribute('aria-hidden', 'true');
+    node.setAttribute('focusable', 'false');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', kind === 'code' ? 'm8 7-5 5 5 5m8-10 5 5-5 5m-5 3 2-16' : 'M6 18 18 6M6 6h12v12');
+    node.append(path);
+    return node;
+  }
+  function externalLink(href, text, className, label, kind) {
+    const url = validLink(href);
+    if (!url) return null;
+    const node = el('a', className);
+    node.href = url;
+    node.target = '_blank';
+    node.rel = 'noopener noreferrer';
+    node.setAttribute('aria-label', label || `${text}, 새 탭`);
+    node.append(el('span', '', text), icon(kind));
+    return node;
+  }
+
+  function render() {
+    if (!projects.length) {
+      const notice = el('div', 'noscript-panel');
+      notice.append(el('h2', '', '프로젝트를 추가해 주세요.'), el('p', '', 'projects.js의 프로젝트 목록을 확인해 주세요.'));
+      track.append(notice);
+      $('#prevButton').disabled = $('#nextButton').disabled = true;
+      return;
+    }
+    const fragment = document.createDocumentFragment();
+    projects.forEach((p, index) => {
+      const accent = color(p.accent);
+      const card = el('article', 'project');
+      card.id = `project-${p.id}`;
+      card.dataset.projectId = p.id;
+      card.dataset.index = String(index);
+      card.setAttribute('role', 'group');
+      card.setAttribute('aria-roledescription', '슬라이드');
+      card.setAttribute('aria-label', `${projects.length}개 중 ${index + 1}. ${p.title}`);
+      card.style.setProperty('--accent', accent);
+      const surface = el('div', 'project-surface');
+      const copy = el('div', 'project-copy');
+      const meta = el('div', 'project-meta');
+      meta.append(el('span', 'project-index', pad(index + 1)), el('span', '', p.categoryEn || p.category || 'WEB APPLICATION'));
+      const title = el('h2', 'project-title');
+      const lines = Array.isArray(p.displayTitle) && p.displayTitle.length ? p.displayTitle : [p.title];
+      if (lines.some((line) => String(line).length > 6)) title.classList.add('long-title');
+      title.setAttribute('aria-label', p.title);
+      lines.forEach((line) => {
+        const wrap = el('span', 'title-line');
+        wrap.setAttribute('aria-hidden', 'true');
+        wrap.append(el('span', '', line));
+        title.append(wrap);
+      });
+      const tags = el('div', 'project-tags');
+      (Array.isArray(p.tags) ? p.tags : []).slice(0, 4).forEach((tag) => tags.append(el('span', 'project-tag', tag)));
+      const actions = el('div', 'project-actions');
+      const launch = externalLink(p.launch, '앱 열기', 'launch-button', `${p.title} 앱 열기, 새 탭`);
+      const repo = externalLink(p.repository, 'GitHub', 'code-link', `${p.title} 소스코드, 새 탭`, 'code');
+      if (launch) actions.append(launch);
+      if (repo) actions.append(repo);
+      const details = el('button', 'details-button');
+      details.type = 'button';
+      details.dataset.detail = String(index);
+      details.setAttribute('aria-haspopup', 'dialog');
+      details.setAttribute('aria-controls', 'detailDialog');
+      details.setAttribute('aria-label', `${p.title} 프로젝트 이야기`);
+      details.append(el('span', '', '프로젝트 이야기'), el('span', '', '→'));
+      copy.append(meta, title, el('p', 'project-subtitle', p.subtitle || ''), el('p', 'project-description', p.description || ''), tags, actions, details);
+      const stage = el('div', 'art-stage');
+      stage.setAttribute('aria-hidden', 'true');
+      const top = el('div', 'art-topline');
+      top.append(el('span', '', 'HYUN-APPS / PROJECT STUDY'), el('span', '', `No. ${pad(index + 1)}`));
+      const object = el('div', 'art-object');
+      const caption = el('div', 'visual-caption');
+      const captionLeft = el('span');
+      captionLeft.append(el('i', 'caption-dot'), el('span', 'caption-text', '소개용 모션 비주얼'));
+      caption.append(captionLeft, el('span', '', 'EXPLORE THE IDEA ↗'));
+      const showVisual = () => {
+        object.replaceChildren();
+        // Only authored SVG strings in visuals.js are parsed here. No project strings are injected.
+        const template = document.createElement('template');
+        const knownKey = Object.prototype.hasOwnProperty.call(visuals, p.visual) ? p.visual : 'stock';
+        template.innerHTML = visuals[knownKey] || '';
+        object.append(template.content.cloneNode(true));
+        // Future cards may reuse a visual. Prefix SVG IDs and local references to avoid collisions.
+        $$('[id]', object).forEach((node) => {
+          const old = node.id;
+          const replacement = `${p.id}-${old}`;
+          $$('*', object).forEach((item) => {
+            [...item.attributes].forEach((attr) => {
+              if (attr.value.includes(`url(#${old})`)) item.setAttribute(attr.name, attr.value.replaceAll(`url(#${old})`, `url(#${replacement})`));
+            });
+          });
+          node.id = replacement;
+        });
+        $('.caption-text', caption).textContent = '소개용 모션 비주얼';
+      };
+      const image = safeImage(p.screenshot);
+      if (image) {
+        const img = el('img');
+        img.src = image;
+        img.alt = p.screenshotAlt || `${p.title} 화면`;
+        img.decoding = 'async';
+        img.loading = index ? 'lazy' : 'eager';
+        img.addEventListener('error', showVisual, { once: true });
+        object.append(img);
+        $('.caption-text', caption).textContent = '앱 스크린샷';
+      } else showVisual();
+      stage.append(top, object, caption);
+      surface.append(copy, stage);
+      const peek = el('button', 'peek-hit');
+      peek.type = 'button';
+      peek.tabIndex = -1;
+      peek.dataset.go = String(index);
+      peek.setAttribute('aria-label', `${p.title} 프로젝트로 이동`);
+      card.append(surface, peek);
+      fragment.append(card);
+
+      const tab = el('button', 'project-tab');
+      tab.type = 'button';
+      tab.dataset.go = String(index);
+      tab.style.setProperty('--tab-accent', accent);
+      tab.setAttribute('aria-label', `${index + 1}. ${p.title} 보기`);
+      tab.setAttribute('aria-controls', card.id);
+      tab.append(el('span', 'tab-index', pad(index + 1)), el('span', 'tab-name', p.shortTitle || p.title));
+      $('#projectTabs').append(tab);
+
+      const item = el('button', 'index-item');
+      item.type = 'button';
+      item.dataset.go = String(index);
+      item.dataset.fromIndex = 'true';
+      item.style.setProperty('--item-accent', accent);
+      const itemText = el('span');
+      itemText.append(el('span', 'index-item-title', p.title), el('span', 'index-item-category', p.category || '웹앱'));
+      item.append(el('span', 'index-item-number', pad(index + 1)), itemText, el('span', 'index-item-arrow', '↗'));
+      $('#indexList').append(item);
+
+      const wash = el('div', 'ambient-layer');
+      wash.style.setProperty('--wash', accent);
+      $('#ambient').append(wash);
+    });
+    track.append(fragment);
+    cards = $$('.project', track);
+    tabs = $$('.project-tab');
+    ambientLayers = $$('.ambient-layer');
+    $('#totalHeader').textContent = $('#totalNumber').textContent = pad(projects.length);
+    const github = validLink(config.github);
+    if (github) $('.github-link').href = github;
+  }
+
+  function measure() {
+    const gutter = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+    // offsetLeft/offsetWidth ignore animated transforms; safe while parallax is active.
+    offsets = cards.map((card) => card.offsetLeft - gutter);
+  }
+  function nearestIndex() {
+    let index = 0;
+    let distance = Infinity;
+    offsets.forEach((offset, i) => {
+      const nextDistance = Math.abs(offset - track.scrollLeft);
+      if (nextDistance < distance) { distance = nextDistance; index = i; }
+    });
+    return index;
+  }
+  function setCurrent(index, announce = true) {
+    if (index === current || !projects[index]) return;
+    const previous = current;
+    current = index;
+    cards.forEach((card, i) => {
+      const active = i === index;
+      card.classList.toggle('is-active', active);
+      card.classList.remove('is-entering');
+      $$('a,button', $('.project-copy', card)).forEach((control) => { control.tabIndex = active ? 0 : -1; });
+      tabs[i].setAttribute('aria-current', active ? 'true' : 'false');
+      ambientLayers[i].classList.toggle('is-active', active);
+    });
+    if (!reduced) {
+      // Separate frames let entry keyframes restart on a previously visited card.
+      requestAnimationFrame(() => { if (current === index) cards[index].classList.add('is-entering'); });
+    }
+    root.style.setProperty('--accent', color(projects[index].accent));
+    $('#currentNumber').textContent = pad(index + 1);
+    $('#prevButton').disabled = index === 0;
+    $('#nextButton').disabled = index === projects.length - 1;
+    $('#prevButton').setAttribute('aria-label', index > 0 ? `이전 프로젝트: ${projects[index - 1].title}` : '첫 번째 프로젝트입니다');
+    $('#nextButton').setAttribute('aria-label', index < projects.length - 1 ? `다음 프로젝트: ${projects[index + 1].title}` : '마지막 프로젝트입니다');
+    if (previous !== -1) document.title = `${projects[index].title} — Hyun-apps`;
+    if (announce) {
+      clearTimeout(announceTimer);
+      announceTimer = setTimeout(() => { $('#slideAnnouncement').textContent = `${projects.length}개 중 ${index + 1}번째, ${projects[index].title}`; }, 350);
+    }
+  }
+  function updateScroll() {
+    frame = 0;
+    if (!cards.length) return;
+    const position = track.scrollLeft;
+    const width = cards[0].offsetWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
+    cards.forEach((card, index) => {
+      const distance = clamp((offsets[index] - position) / width, -1.5, 1.5);
+      card.style.setProperty('--parallax', reduced ? '0px' : `${(distance * 35).toFixed(2)}px`);
+      card.style.setProperty('--card-scale', reduced ? '1' : (1 - Math.min(Math.abs(distance), 1) * .028).toFixed(4));
+      card.style.setProperty('--card-opacity', String(1 - Math.min(Math.abs(distance), 1) * .37));
+    });
+    const progress = projects.length === 1 ? 1 : clamp((position / Math.max(1, offsets[offsets.length - 1])) * (1 - 1 / projects.length) + 1 / projects.length, 1 / projects.length, 1);
+    $('#journeyProgress').style.width = `${progress * 100}%`;
+    setCurrent(nearestIndex());
+  }
+  function scheduleScroll() {
+    if (!frame) frame = requestAnimationFrame(updateScroll);
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => {
+      if (!drag && !isProgrammatic) persistHash();
+    }, 220);
+  }
+  function persistHash() {
+    if (current < 0) return;
+    const hash = `#${projects[current].id}`;
+    if (location.hash !== hash) {
+      try { history.replaceState(null, '', hash); } catch (_) { /* file:// and embedded preview may restrict History. */ }
+    }
+  }
+  function stopAnimation() {
+    cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
+    isProgrammatic = false;
+    track.classList.remove('is-programmatic');
+  }
+  function go(index, { instant = false, focus = false } = {}) {
+    if (!cards.length) return;
+    index = clamp(index, 0, cards.length - 1);
+    stopAnimation();
+    track.classList.add('is-programmatic');
+    const from = track.scrollLeft;
+    const target = offsets[index] || 0;
+    const delta = target - from;
+    const finish = () => {
+      track.scrollLeft = target;
+      stopAnimation();
+      setCurrent(index);
+      updateScroll();
+      persistHash();
+      if (focus) $('.launch-button, .code-link, .details-button', cards[index])?.focus({ preventScroll: true });
+    };
+    if (instant || reduced || Math.abs(delta) < 1) { finish(); return; }
+    const duration = clamp(Math.abs(delta) * .12 + 520, 560, 980);
+    const start = performance.now();
+    isProgrammatic = true;
+    track.classList.add('is-programmatic');
+    const step = (now) => {
+      const t = clamp((now - start) / duration, 0, 1);
+      // Quintic ease-out: responsive start, gentle settling. No continuous idle JS loop.
+      const ease = 1 - Math.pow(1 - t, 5);
+      track.scrollLeft = from + delta * ease;
+      if (t < 1) animationFrame = requestAnimationFrame(step);
+      else finish();
+    };
+    animationFrame = requestAnimationFrame(step);
+  }
+
+  function updateMotion() {
+    reduced = userPaused || pref.matches;
+    body.classList.toggle('reduced-motion', reduced);
+    $('#motionButton').setAttribute('aria-pressed', String(reduced));
+    $('#motionButton').setAttribute('aria-label', pref.matches ? '기기의 동작 줄이기 설정 적용 중' : reduced ? '장식 애니메이션 켜기' : '장식 애니메이션 줄이기');
+    $('#motionLabel').textContent = reduced ? '모션 OFF' : '모션 ON';
+    if (isProgrammatic && reduced) go(nearestIndex(), { instant: true });
+    updateScroll();
+  }
+  $('#motionButton').addEventListener('click', () => {
+    if (pref.matches) {
+      toast('기기의 ‘동작 줄이기’ 설정을 따르고 있어요.');
+      return;
+    }
+    userPaused = !userPaused;
+    try { localStorage.setItem(STORE, userPaused ? 'reduced' : 'full'); } catch (_) { /* Still works for this visit. */ }
+    updateMotion();
+    toast(userPaused ? '장식 애니메이션을 줄였어요.' : '애니메이션을 다시 켰어요.');
+  });
+  if (pref.addEventListener) pref.addEventListener('change', updateMotion);
+  else pref.addListener(updateMotion);
+
+  function toast(message) {
+    const node = $('#toast');
+    clearTimeout(toastTimer);
+    node.textContent = message;
+    node.classList.add('is-visible');
+    toastTimer = setTimeout(() => node.classList.remove('is-visible'), 3100);
+  }
+
+  function syncSuspended() {
+    body.classList.toggle('is-suspended', document.hidden || !!$('dialog[open]'));
+  }
+  function openDialog(dialog) {
+    if (dialog.open) return;
+    dialog.classList.remove('is-closing');
+    dialog.showModal();
+    syncSuspended();
+  }
+  function closeDialog(dialog, after) {
+    if (!dialog?.open || dialog.classList.contains('is-closing')) return;
+    const finish = () => {
+      dialog.close();
+      dialog.classList.remove('is-closing');
+      syncSuspended();
+      if (after) after();
+    };
+    if (reduced) finish();
+    else {
+      // Suspend only the showcase, not the dialog's enter/exit transition.
+      dialog.classList.add('is-closing');
+      setTimeout(finish, 190);
+    }
+  }
+  function showDetails(index) {
+    const p = projects[index];
+    if (!p) return;
+    const dialog = $('#detailDialog');
+    dialog.style.setProperty('--accent', color(p.accent));
+    $('#detailCategory').textContent = `${pad(index + 1)} / ${p.categoryEn || 'PROJECT NOTES'}`;
+    $('#detailTitle').textContent = p.title;
+    $('#detailPurpose').textContent = p.purpose || p.description || '';
+    const features = $('#detailFeatures');
+    features.replaceChildren();
+    (Array.isArray(p.features) ? p.features : []).forEach((feature, i) => {
+      const item = el('div', 'detail-feature');
+      item.append(el('span', '', pad(i + 1)), el('div', '', feature));
+      features.append(item);
+    });
+    $('#detailNote').textContent = p.note || '이 비주얼은 앱을 소개하기 위한 개념도입니다.';
+    const actions = $('#detailActions');
+    actions.replaceChildren();
+    const launch = externalLink(p.launch, '앱 열기', 'launch-button', `${p.title} 앱 열기, 새 탭`);
+    const repo = externalLink(p.repository, 'GitHub', 'code-link', `${p.title} 소스코드, 새 탭`, 'code');
+    if (launch) actions.append(launch);
+    if (repo) actions.append(repo);
+    openDialog(dialog);
+  }
+
+  document.addEventListener('click', (event) => {
+    if (performance.now() < suppressClickUntil && event.target.closest('.project-track')) { event.preventDefault(); event.stopPropagation(); return; }
+    const goButton = event.target.closest('[data-go]');
+    if (goButton) {
+      const index = Number(goButton.dataset.go);
+      if (goButton.dataset.fromIndex) closeDialog($('#indexDialog'), () => go(index, { focus: true }));
+      else go(index);
+    }
+    const detail = event.target.closest('[data-detail]');
+    if (detail) showDetails(Number(detail.dataset.detail));
+    const close = event.target.closest('.close-dialog');
+    if (close) closeDialog(close.closest('dialog'));
+  }, true);
+  $('#indexButton').addEventListener('click', () => openDialog($('#indexDialog')));
+  $$('dialog').forEach((dialog) => {
+    dialog.addEventListener('cancel', (event) => { event.preventDefault(); closeDialog(dialog); });
+    dialog.addEventListener('close', syncSuspended);
+    dialog.addEventListener('click', (event) => {
+      if (event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeDialog(dialog);
+    });
+  });
+  document.addEventListener('visibilitychange', syncSuspended);
+
+  $('#prevButton').addEventListener('click', () => go(current - 1));
+  $('#nextButton').addEventListener('click', () => go(current + 1));
+  $('.brand').addEventListener('click', (event) => { event.preventDefault(); go(0); });
+  document.addEventListener('keydown', (event) => {
+    if ($('dialog[open]') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select,[contenteditable="true"]')) return;
+    const focusInCard = !!event.target.closest('.project-copy');
+    if (event.key === 'ArrowRight') { event.preventDefault(); go(current + 1, { focus: focusInCard }); }
+    if (event.key === 'ArrowLeft') { event.preventDefault(); go(current - 1, { focus: focusInCard }); }
+    if (event.key === 'Home' && track.contains(event.target)) { event.preventDefault(); go(0, { focus: focusInCard }); }
+    if (event.key === 'End' && track.contains(event.target)) { event.preventDefault(); go(projects.length - 1, { focus: focusInCard }); }
+  });
+
+  // Keep real horizontal trackpad/touch gestures native. Map vertical wheel only over the cards.
+  track.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.metaKey || $('dialog[open]')) return; // Pinch zoom must remain intact.
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY) * .7 && Math.abs(event.deltaX) > 0) {
+      if (isProgrammatic) stopAnimation();
+      return;
+    }
+    if (event.shiftKey && event.deltaX === 0) return; // Native Shift+wheel horizontal scrolling.
+    // At zoom/short-height fallback, vertical page scroll takes priority.
+    if (document.documentElement.scrollHeight > innerHeight + 6) return;
+    if (!event.deltaY) return;
+    const direction = Math.sign(event.deltaY);
+    if ((current === 0 && direction < 0) || (current === projects.length - 1 && direction > 0)) return;
+    event.preventDefault();
+    const now = performance.now();
+    const normalized = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1);
+    if (now - wheelLast > 160 || Math.sign(wheelAccum) !== direction) wheelAccum = 0;
+    wheelLast = now;
+    if (now < wheelLockUntil) return;
+    wheelAccum += normalized;
+    if (Math.abs(wheelAccum) >= 28) {
+      go(current + direction);
+      wheelAccum = 0;
+      wheelLockUntil = now + 760;
+    }
+  }, { passive: false });
+
+  // Mouse-only drag. Touch is delegated to native scrolling for Safari momentum and pinch zoom.
+  track.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a, .project-copy button')) return;
+    stopAnimation();
+    drag = { id: event.pointerId, startX: event.clientX, startScroll: track.scrollLeft, lastX: event.clientX, lastTime: performance.now(), velocity: 0, moved: false };
+  });
+  track.addEventListener('pointermove', (event) => {
+    if (!drag || drag.id !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    if (!drag.moved && Math.abs(dx) > 6) {
+      drag.moved = true;
+      track.classList.add('is-dragging');
+      track.setPointerCapture(event.pointerId);
+    }
+    if (!drag.moved) return;
+    event.preventDefault();
+    const now = performance.now();
+    const dt = Math.max(1, now - drag.lastTime);
+    drag.velocity = (event.clientX - drag.lastX) / dt;
+    drag.lastX = event.clientX;
+    drag.lastTime = now;
+    track.scrollLeft = drag.startScroll - dx;
+  });
+  function finishDrag(event) {
+    if (!drag || drag.id !== event.pointerId) return;
+    const state = drag;
+    drag = null;
+    if (track.hasPointerCapture(event.pointerId)) track.releasePointerCapture(event.pointerId);
+    track.classList.remove('is-dragging');
+    if (!state.moved) return;
+    suppressClickUntil = performance.now() + 180;
+    const velocity = performance.now() - state.lastTime > 100 ? 0 : state.velocity;
+    const predicted = track.scrollLeft - clamp(velocity * 200, -cards[0].offsetWidth * .6, cards[0].offsetWidth * .6);
+    let targetIndex = 0;
+    offsets.forEach((offset, index) => { if (Math.abs(offset - predicted) < Math.abs(offsets[targetIndex] - predicted)) targetIndex = index; });
+    // Prevent native snap from jumping before the custom settling motion starts.
+    track.classList.add('is-programmatic');
+    go(targetIndex);
+  }
+  track.addEventListener('pointerup', finishDrag);
+  track.addEventListener('pointercancel', finishDrag);
+  track.addEventListener('lostpointercapture', (event) => { if (drag) finishDrag(event); });
+  window.addEventListener('pointerup', finishDrag);
+  track.addEventListener('dragstart', (event) => { if (event.target.tagName === 'IMG') event.preventDefault(); });
+  track.addEventListener('touchstart', () => { touchStarted = true; stopAnimation(); }, { passive: true });
+  track.addEventListener('touchend', () => { touchStarted = false; }, { passive: true });
+  track.addEventListener('scroll', scheduleScroll, { passive: true });
+
+  // Lightweight eased pointer tilt: runs only during pointer movement/settling, never on touch.
+  let tiltFrame = 0;
+  let tiltX = 0, tiltY = 0, targetTiltX = 0, targetTiltY = 0;
+  let tiltStage = null;
+  function tiltTick() {
+    tiltFrame = 0;
+    if (!tiltStage) return;
+    tiltX += (targetTiltX - tiltX) * .13;
+    tiltY += (targetTiltY - tiltY) * .13;
+    tiltStage.style.setProperty('--tilt-x', `${tiltX.toFixed(3)}deg`);
+    tiltStage.style.setProperty('--tilt-y', `${tiltY.toFixed(3)}deg`);
+    if (Math.abs(targetTiltX - tiltX) + Math.abs(targetTiltY - tiltY) > .018) tiltFrame = requestAnimationFrame(tiltTick);
+  }
+  track.addEventListener('pointermove', (event) => {
+    if (!finePointer.matches || reduced || drag?.moved || event.pointerType !== 'mouse') return;
+    const stage = event.target.closest('.art-stage');
+    if (!stage || !stage.closest('.project').classList.contains('is-active')) return;
+    if (tiltStage !== stage) {
+      if (tiltStage) { tiltStage.style.setProperty('--tilt-x', '0deg'); tiltStage.style.setProperty('--tilt-y', '0deg'); }
+      tiltStage = stage;
+      tiltX = tiltY = 0;
+    }
+    const rect = stage.getBoundingClientRect();
+    targetTiltY = ((event.clientX - rect.left) / rect.width - .5) * 8;
+    targetTiltX = -((event.clientY - rect.top) / rect.height - .5) * 6;
+    if (!tiltFrame) tiltFrame = requestAnimationFrame(tiltTick);
+  });
+  track.addEventListener('pointerleave', () => { targetTiltX = targetTiltY = 0; if (tiltStage && !tiltFrame) tiltFrame = requestAnimationFrame(tiltTick); });
+
+  $('#shareButton').addEventListener('click', async () => {
+    if (!/^https?:$/.test(location.protocol) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+      toast('GitHub Pages 배포 후 링크를 공유할 수 있어요.');
+      return;
+    }
+    const url = new URL(location.href);
+    url.search = '';
+    url.hash = projects[current]?.id || '';
+    const share = { title: 'Hyun-apps', text: `${projects[current]?.title || '웹앱'} — Hyun-apps`, url: url.href };
+    try {
+      if (navigator.share) await navigator.share(share);
+      else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(url.href); toast('현재 프로젝트 링크를 복사했어요.'); }
+      else {
+        const input = el('textarea');
+        input.value = url.href;
+        input.style.cssText = 'position:fixed;left:-9999px;top:0';
+        body.append(input); input.select();
+        const copied = document.execCommand('copy');
+        input.remove();
+        toast(copied ? '현재 프로젝트 링크를 복사했어요.' : '주소창의 링크를 복사해 주세요.');
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') toast('공유하지 못했어요. 주소창의 링크를 복사해 주세요.');
+    }
+  });
+
+  function onResize() {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => {
+      const index = Math.max(0, current);
+      if (touchStarted || drag) { measure(); return; }
+      measure();
+      go(index, { instant: true });
+    });
+  }
+  window.addEventListener('resize', onResize, { passive: true });
+  window.addEventListener('orientationchange', onResize);
+  window.addEventListener('hashchange', () => {
+    const index = projects.findIndex((p) => `#${p.id}` === location.hash);
+    if (index >= 0) go(index);
+  });
+  window.addEventListener('pageshow', () => { measure(); updateScroll(); });
+
+  render();
+  measure();
+  updateMotion();
+  const initial = projects.findIndex((p) => `#${p.id}` === location.hash);
+  go(Math.max(0, initial), { instant: true });
+  if ('ResizeObserver' in window && cards[0]) new ResizeObserver(onResize).observe(cards[0]);
+
+  // Cache only this portfolio's shell. Never touch another webapp's cache or storage.
+  const mayRegister = location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname);
+  if ('serviceWorker' in navigator && mayRegister && !window.HYUN_STANDALONE) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' }).catch(() => {
+        // Core portfolio remains usable even if installation/caching is blocked.
+      });
+    }, { once: true });
+  }
+})();

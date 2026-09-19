@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111214">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Hyun-apps — 일상의 문제를 작은 웹앱으로. 자전거 현장 도구부터 비파괴검사 학습까지, 직접 만든 웹앱을 좌우로 넘겨보세요.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Hyun-apps — 작은 앱, 실용적인 변화">
+  <meta property="og:description" content="현장에서 시작한 아이디어. 좌우로 넘겨보고, 웹앱을 직접 열어보세요.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hyun-apps">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Hyun-apps — 웹앱 포트폴리오</title>
+  <script src="./projects.js" defer></script>
+  <script src="./visuals.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#showcase">프로젝트 바로 보기</a>
+  <div class="ambient" id="ambient" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="#stock-lab" aria-label="Hyun-apps 첫 프로젝트">
+        <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Hyun<span class="brand-dash">-</span>apps<span class="brand-dot">.</span></span>
+      </a>
+      <span class="header-caption">SMALL APPS. REAL PURPOSE.</span>
+      <nav class="header-actions" aria-label="사이트 메뉴">
+        <button class="text-button index-trigger" id="indexButton" type="button" aria-haspopup="dialog" aria-controls="indexDialog"><span class="grid-icon" aria-hidden="true"></span><span>프로젝트</span><span class="count-chip" id="totalHeader">05</span></button>
+        <span class="header-separator" aria-hidden="true"></span>
+        <a class="github-link" href="https://github.com/vkdnjs501" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필, 새 탭"><span>GitHub</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        <button class="icon-button share-button" id="shareButton" type="button" aria-label="현재 프로젝트 링크 공유" title="현재 프로젝트 링크 공유"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M6 11H4v10h16V11h-2"/></svg></button>
+      </nav>
+    </header>
+
+    <section class="intro" aria-labelledby="introTitle">
+      <div class="intro-left">
+        <p class="eyebrow"><span class="signal-dot" aria-hidden="true"></span> THE WEBAPP COLLECTION <span class="slash">/</span> 2026</p>
+        <h1 id="introTitle"><span class="reveal-line"><span>일상의 문제를, <em>작은 앱으로.</em></span></span></h1>
+      </div>
+      <div class="intro-right"><span>현장에서 시작한 아이디어를<br>직접 열어보고 경험해 보세요.</span><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M8 9v22h23m0 0L20 20m11 11L20 40" transform="translate(0 -4)"/></svg></div>
+    </section>
+
+    <main class="showcase" id="showcase" tabindex="-1" aria-label="웹앱 프로젝트 모음" aria-roledescription="캐러셀">
+      <div class="project-track" id="projectTrack" tabindex="0" aria-label="프로젝트 카드. 좌우로 넘기거나 화살표 키로 이동하세요."></div>
+      <noscript><div class="noscript-panel"><h2>Hyun-apps</h2><p>움직이는 포트폴리오를 보려면 JavaScript를 켜주세요.</p><p><a href="https://github.com/vkdnjs501" target="_blank" rel="noopener noreferrer">GitHub에서 프로젝트 보기 ↗</a></p></div></noscript>
+    </main>
+
+    <section class="navigator" aria-label="프로젝트 이동">
+      <div class="current-position" aria-hidden="true"><span id="currentNumber">01</span><span class="position-divider">/</span><span id="totalNumber">05</span></div>
+      <nav class="project-tabs" id="projectTabs" aria-label="프로젝트 바로 선택"></nav>
+      <div class="nav-controls"><span class="gesture-hint" id="gestureHint"><span class="hint-line" aria-hidden="true"></span>옆으로 넘겨보세요</span><button class="round-button" id="prevButton" type="button" aria-label="이전 프로젝트"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 12H4m0 0 6-6m-6 6 6 6"/></svg></button><button class="round-button next-button" id="nextButton" type="button" aria-label="다음 프로젝트"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h16m0 0-6-6m6 6-6 6"/></svg></button></div>
+      <div class="journey-rail" aria-hidden="true"><span id="journeyProgress"></span></div>
+    </section>
+
+    <footer class="site-footer">
+      <span class="footer-credit">© 2026 Hyun-apps <span class="footer-divider">/</span> Built from everyday needs.</span>
+      <div class="footer-right"><span class="footer-version">VOL. 01</span><button class="motion-button" id="motionButton" type="button" aria-pressed="false" aria-label="장식 애니메이션 줄이기"><span class="motion-icon" aria-hidden="true"><i></i><i></i><i></i></span><span id="motionLabel">모션 ON</span></button></div>
+    </footer>
+  </div>
+
+  <dialog class="sheet-dialog index-dialog" id="indexDialog" aria-labelledby="indexTitle">
+    <div class="sheet-content"><header class="sheet-header"><div><p class="eyebrow">THE COLLECTION</p><h2 id="indexTitle">프로젝트 둘러보기<span>.</span></h2></div><button class="icon-button close-dialog" type="button" aria-label="프로젝트 목록 닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></header><div class="index-list" id="indexList"></div><a class="all-repos" href="https://github.com/vkdnjs501?tab=repositories" target="_blank" rel="noopener noreferrer">GitHub에서 전체 저장소 보기 <span aria-hidden="true">↗</span></a></div>
+  </dialog>
+
+  <dialog class="sheet-dialog detail-dialog" id="detailDialog" aria-labelledby="detailTitle">
+    <div class="sheet-content"><header class="sheet-header"><div><p class="eyebrow" id="detailCategory">PROJECT NOTES</p><h2 id="detailTitle"></h2></div><button class="icon-button close-dialog" type="button" aria-label="프로젝트 설명 닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></header><p class="detail-purpose" id="detailPurpose"></p><div class="detail-features" id="detailFeatures"></div><p class="detail-note" id="detailNote"></p><div class="detail-actions" id="detailActions"></div><p class="link-disclaimer">실행 주소는 GitHub Pages 기본 경로입니다. 열리지 않으면 해당 저장소의 Pages 공개 설정과 주소를 확인해 주세요.</p></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <p class="sr-only" id="slideAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
+</body>
+</html>
