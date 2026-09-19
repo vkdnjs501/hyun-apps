@@ -1,5 +1,5 @@
 /**
- * Hyun-apps 1.0.0 — 이 파일에서 프로젝트를 추가·수정하세요.
+ * Hyun-apps 1.1.0 — 이 파일에서 프로젝트를 추가·수정하세요.
  * 순서 = 카드 순서. id는 영문/숫자/하이픈으로 중복 없이 입력합니다.
  * launch: GitHub Pages 실행 주소, repository: 소스코드 주소.
  * screenshot: 실제 스크린샷을 업로드한 뒤 "./stock-screen.webp"처럼 입력합니다.
@@ -10,6 +10,7 @@
  */
 window.HYUN_APPS = {
   title: 'Hyun-apps',
+  version: '1.1.0',
   github: 'https://github.com/vkdnjs501',
   projects: [
     {
@@ -51,6 +52,33 @@ window.HYUN_APPS = {
       purpose: '침투액·제거방법·현상방법의 기호를 선택하고, 그 조합의 처리순서와 근거를 시각적으로 이해하도록 만든 학습 도구입니다.',
       features: ['침투액·제거방법·현상방법의 기호 선택', '조합에 따른 처리순서 카드', '단계별 이유와 근거 확인'],
       note: '포트폴리오의 그래픽은 기호 선택이라는 개념을 소개합니다. 실제 검사 절차나 기술적 판정을 나타내는 도식이 아닙니다.'
+    },
+    {
+      id: 'logic-expedition',
+      title: 'LOGIC EXPEDITION',
+      displayTitle: ['LOGIC', 'EXPEDITION'],
+      localTitle: '논리탐험대',
+      shortTitle: 'LOGIC',
+      category: '인터랙티브 학습',
+      categoryEn: 'INTERACTIVE LEARNING',
+      subtitle: '정답보다 먼저, 생각하는 방법을.',
+      description: '13명의 캐릭터와 함께 이야기를 읽고,\n생각의 근거를 찾아보는 논리 학습 어드벤처.',
+      tags: ['13명 캐릭터', '논리 학습', '생각 노트'],
+      accent: '#d7c2f5',
+      visual: 'logic',
+      screenshot: '',
+      screenshotAlt: '논리탐험대 실제 앱 화면',
+      launchLabel: '탐험 시작',
+      launch: 'https://vkdnjs501.github.io/LOGIC_EXPEDITION_GAME/',
+      repository: 'https://github.com/vkdnjs501/LOGIC_EXPEDITION_GAME',
+      purpose: '추상적인 논리 개념을 이야기와 캐릭터를 통해 만나도록 만든 학습 도구입니다. 정답만 고르기보다, 근거와 결론을 연결하며 스스로 생각을 정리하는 경험을 담았습니다.',
+      features: ['이야기 — 캐릭터와 함께 질문의 출발점 만나기', '개념 탐험 — 논리·추론의 연결 방식 살펴보기', '내 차례 — 생각을 정리하고 생각 노트 남기기'],
+      note: '캐릭터 표지는 원본 일러스트를 활용한 소개 연출이며 실제 게임 화면이 아닙니다. 포트폴리오는 학습 진도나 생각 노트에 접근하지 않습니다. 실제 학습은 ‘탐험 시작’으로 원본 앱에서 진행합니다.',
+      characters: [
+        { id: 'byeoli', name: '별이', topic: '논리의 기본 법칙', role: 'THE GUIDE', accent: '#d7c2f5', portrait: './logic-byeoli-portrait.webp', room: './logic-byeoli-room.webp' },
+        { id: 'danseo', name: '단서', topic: '가설추론·귀추법', role: 'THE EXPLORER', accent: '#f0cb96', portrait: './logic-danseo-portrait.webp', room: './logic-danseo-room.webp' },
+        { id: 'bandi', name: '반디', topic: '반례로 검토하기', role: 'THE CHALLENGER', accent: '#efb6ce', portrait: './logic-bandi-portrait.webp', room: './logic-bandi-room.webp' }
+      ]
     },
     {
       id: 'bike-fitting',

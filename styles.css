@@ -431,3 +431,146 @@ body.is-suspended .sheet-dialog::backdrop { animation-play-state:running!importa
 body.is-suspended .site-shell .ambient-motion { animation-play-state:paused!important; }
 
 @media (max-width:760px) and (max-height:740px) { .site-footer .motion-button { min-height:28px; padding:5px 0; } }
+
+/* ── Hyun-apps 1.1.0 · LOGIC EXPEDITION ───────────────────────
+   A living book cover. Original illustration crops, no nested swipe area.
+   Every rule is scoped; the five existing visual identities are retained. */
+.project--logic .project-title.long-title { font-size:clamp(38px,4.25vw,68px); letter-spacing:-3px; line-height:.94; }
+.project-local-title { margin:-2px 0 10px; color:var(--accent); font-size:14px; letter-spacing:2px; font-weight:500; }
+.project--logic .project-description { max-width:33em; }
+.project--logic .art-stage { background:linear-gradient(145deg,#191c2b,#131824 60%,#1d1727); overflow:hidden; }
+.project--logic .art-stage::before { display:none; }
+.project--logic .art-topline { color:#b6adc4; font-size:8px; z-index:5; }
+.project--logic .art-topline span:last-child { color:#e0c5fa; opacity:1; }
+.project--logic .art-object { width:100%; height:100%; }
+.project--logic .visual-caption { color:#bcb1c6; z-index:5; font-family:inherit; letter-spacing:0; font-size:10px; }
+.project--logic .visual-caption>span:last-child { color:#9d8caa; font-size:8px; }
+.project--logic:not(.is-active) .logic-showcase { pointer-events:none; }
+.project--logic .logic-showcase { --character-accent:#d7c2f5; position:relative; isolation:isolate; width:100%; height:100%; display:grid; grid-template-rows:minmax(0,1fr) auto auto; gap:12px; padding:69px 26px 66px; }
+.project--logic .logic-environments,.project--logic .logic-veil,.project--logic .logic-stars { position:absolute; inset:0; pointer-events:none; }
+.project--logic .logic-environments { z-index:-3; overflow:hidden; }
+.project--logic .logic-environments .logic-room { position:absolute; inset:0; max-width:none; max-height:none; width:100%; height:100%; object-fit:cover; object-position:center 62%; border:0; border-radius:0; box-shadow:none; opacity:0; transform:scale(1.025); transition:opacity 280ms ease; }
+.project--logic .logic-environments .logic-room.is-loaded.is-selected { opacity:.52; }
+.project--logic .logic-veil { z-index:-2; background:linear-gradient(90deg,#181927bc,transparent 20%,transparent 80%,#17192791),linear-gradient(0deg,#171927 2%,#181827ec 18%,#18182926 57%,#191c2be0 100%); }
+.project--logic .logic-stars { z-index:-1; }
+.project--logic .logic-stars i { position:absolute; width:4px; height:4px; background:#f4deaf; border-radius:50%; opacity:.65; animation:logicStarlight 5s ease-in-out infinite; }
+.project--logic .logic-stars i:nth-child(1) { top:18%; left:16%; }
+.project--logic .logic-stars i:nth-child(2) { top:32%; right:12%; width:3px; height:3px; animation-delay:-1.6s; }
+.project--logic .logic-stars i:nth-child(3) { top:12%; right:33%; width:2px; height:2px; animation-delay:-2.8s; }
+.project--logic .logic-stars i:nth-child(4) { bottom:36%; left:10%; width:2px; height:2px; animation-delay:-.5s; }
+.project--logic .logic-stars i:nth-child(5) { top:49%; right:18%; width:3px; height:3px; animation-delay:-3.7s; }
+.project--logic .logic-cast { position:relative; min-height:0; z-index:2; }
+.project--logic .logic-frame { position:absolute; top:50%; left:50%; height:100%; max-height:296px; aspect-ratio:.84; transform:translate(-50%,-50%) translateX(var(--frame-x,0%)) rotate(var(--frame-rotation,0deg)) scale(var(--frame-scale,1)); opacity:var(--frame-opacity,1); transition:transform 280ms cubic-bezier(.2,.75,.2,1),opacity 220ms ease; }
+.project--logic .logic-frame[data-slot="center"] { --frame-x:0%; --frame-rotation:-2deg; --frame-scale:1; --frame-opacity:1; z-index:3; }
+.project--logic .logic-frame[data-slot="left"] { --frame-x:-65%; --frame-rotation:-14deg; --frame-scale:.77; --frame-opacity:.78; z-index:1; }
+.project--logic .logic-frame[data-slot="right"] { --frame-x:65%; --frame-rotation:12deg; --frame-scale:.77; --frame-opacity:.78; z-index:1; }
+.project--logic .logic-frame-enter { height:100%; }
+.project--logic .logic-frame-float { height:100%; display:flex; flex-direction:column; gap:0; background:#f4eee5; border:1px solid #f8f0e8; border-radius:13px; padding:9px 9px 0; box-shadow:0 15px 38px #0006,0 1px 0 #fff inset; overflow:hidden; animation:logicFloat 6s var(--float-delay,0s) ease-in-out infinite; }
+.project.project--logic .logic-frame:not([data-slot="center"]) .ambient-motion { animation-play-state:paused!important; }
+.project--logic .logic-portrait { position:relative; min-height:0; flex:1; overflow:hidden; background:#fff; border-radius:6px; }
+.project--logic .logic-portrait .logic-portrait-image { position:absolute; inset:0; width:100%; height:100%; max-width:none; max-height:none; border:0; border-radius:0; box-shadow:none; object-fit:contain; opacity:0; transition:opacity 180ms ease; }
+.project--logic .logic-portrait .logic-portrait-image.is-loaded { opacity:1; }
+.project--logic .logic-portrait-fallback { position:absolute; inset:0; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 20%,#d9caef55,transparent 70%),#f7f3eb; color:#685775; }
+.project--logic .logic-portrait-fallback .logic-symbol { color:#8c71ac; font-size:clamp(28px,3vw,52px); }
+.project--logic .logic-portrait-fallback small { font:7px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.8px; }
+.project--logic .logic-frame.has-portrait .logic-portrait-fallback { visibility:hidden; }
+.project--logic .logic-frame-label { display:flex; align-items:center; justify-content:space-between; gap:7px; min-height:34px; color:#534859; }
+.project--logic .logic-frame-label strong { font-size:12px; letter-spacing:.8px; font-weight:650; }
+.project--logic .logic-frame-label span { font:7px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.8px; color:#8b8090; }
+.project--logic .logic-selector { position:relative; z-index:4; display:flex; flex-direction:column; align-items:center; gap:9px; }
+.project--logic .logic-character-buttons { display:flex; align-items:center; gap:5px; padding:4px; border:1px solid #ffffff24; background:#111524e0; border-radius:100px; }
+.project--logic .logic-character-button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-width:80px; min-height:44px; padding:9px 15px; border-radius:99px; color:#c4bcd3; background:transparent; font-size:12px; line-height:1.3; transition:background 180ms ease,color 180ms ease,transform 180ms ease; }
+.project--logic .logic-character-button i { width:4px; height:4px; border-radius:50%; background:var(--choice-accent); opacity:.55; }
+.project--logic .logic-character-button[aria-pressed="true"] { background:var(--choice-accent); color:#282031; font-weight:650; }
+.project--logic .logic-character-button[aria-pressed="true"] i { background:#3f3548; opacity:.75; }
+.project--logic .logic-character-button:hover { background:#ffffff12; }
+.project--logic .logic-character-button[aria-pressed="true"]:hover { background:var(--choice-accent); }
+.project--logic .logic-character-button:active { transform:scale(.96); }
+.project--logic .logic-character-button:focus-visible { outline-color:#ffe5b5; outline-offset:2px; }
+.project--logic .logic-topic { margin:0; min-height:17px; font-size:12px; color:#e0d5e9; line-height:1.4; letter-spacing:.2px; text-align:center; }
+.project--logic .logic-learning-path { position:relative; z-index:3; display:flex; align-items:center; justify-content:center; gap:9px; color:#bcaecd; font-size:10px; line-height:1.5; }
+.project--logic .logic-learning-path i { display:block; width:30px; height:1px; background:linear-gradient(90deg,#8a789a77,#dbc1ed99); position:relative; }
+.project--logic .logic-learning-path i::after { content:""; position:absolute; top:-2px; right:0; width:4px; height:4px; border-top:1px solid #c7b0da; border-right:1px solid #c7b0da; transform:rotate(45deg); }
+.project--logic.is-entering .logic-frame-enter { animation:logicCoverIn 400ms 120ms var(--ease) both; }
+.project--logic.is-entering .logic-frame[data-slot="left"] .logic-frame-enter { animation-delay:180ms; }
+.project--logic.is-entering .logic-frame[data-slot="right"] .logic-frame-enter { animation-delay:230ms; }
+.project--logic.is-entering .title-line>span { animation:wordReveal 380ms 220ms var(--ease) both; }
+.project--logic.is-entering .title-line:nth-child(2)>span { animation-delay:270ms; }
+.project--logic.is-entering .project-local-title,
+.project--logic.is-entering .project-description { animation:softReveal 360ms 260ms var(--ease) both; }
+.project--logic.is-entering .logic-learning-path { animation:softReveal 270ms 380ms var(--ease) both; }
+.project--logic .logic-static-fallback { color:#e6cee9; font-size:28px; }
+@keyframes logicCoverIn { from { opacity:0; transform:translateY(12px) scale(.96); } to { opacity:1; transform:none; } }
+@keyframes logicFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+@keyframes logicStarlight { 0%,100% { opacity:.18; transform:scale(.7); } 50% { opacity:.8; transform:scale(1.08); } }
+/* The frame poses remain static and fully visible when motion is reduced. */
+body.reduced-motion .project--logic .logic-frame-float { transform:none; }
+@media (min-width:761px) and (max-height:820px) {
+  .project--logic .logic-showcase { padding:54px 18px 57px; gap:9px; }
+  .project--logic .logic-character-button { padding:7px 14px; min-width:72px; }
+  .project--logic .logic-selector { gap:7px; }
+  .project--logic .project-local-title { margin-bottom:7px; font-size:12px; }
+}
+@media (min-width:761px) and (max-width:1140px) and (min-height:1000px) {
+  .project--logic .project-title.long-title { display:flex; font-size:clamp(40px,5.6vw,58px); gap:12px; }
+  .project--logic .logic-showcase { padding:50px 24px 50px; gap:9px; }
+  .project--logic .logic-selector { gap:7px; }
+  .project--logic .logic-frame { max-height:220px; }
+}
+@media (max-width:760px) {
+  .project--logic .project-surface { grid-template-rows:46% 54%; }
+  .project--logic .project-copy { padding:14px 20px 16px; }
+  .project--logic .project-title.long-title { display:flex; flex-wrap:nowrap; font-size:clamp(21px,6.6vw,32px); line-height:1; letter-spacing:-1.1px; gap:6px; padding-top:8px; margin-bottom:3px; }
+  .project--logic .project-local-title { font-size:11px; line-height:1.3; letter-spacing:1.2px; margin:0 0 6px; }
+  .project--logic .project-subtitle { font-size:12px; margin:0 0 6px; letter-spacing:-.5px; }
+  .project--logic .project-description { font-size:10px; line-height:1.65; letter-spacing:-.15px; }
+  .project--logic .project-tags { margin:8px 0 10px; }
+  .project--logic .project-tag { font-size:8px; padding:3px 6px; }
+  .project--logic .details-button { margin-top:5px; }
+  .project--logic .art-topline { top:13px; left:19px; font-size:6px; letter-spacing:1px; }
+  .project--logic .visual-caption { bottom:10px; left:19px; right:19px; font-size:7px; }
+  .project--logic .visual-caption>span:last-child { display:none; }
+  .project--logic .logic-showcase { padding:31px 12px 29px; gap:5px; }
+  .project--logic .logic-frame { max-height:156px; aspect-ratio:.91; }
+  .project--logic .logic-frame-float { padding:4px 4px 0; border-radius:8px; }
+  .project--logic .logic-portrait { border-radius:4px; }
+  .project--logic .logic-frame-label { min-height:19px; padding:0 2px; justify-content:center; }
+  .project--logic .logic-frame-label strong { font-size:9px; letter-spacing:.5px; }
+  .project--logic .logic-frame-label span { display:none; }
+  .project--logic .logic-selector { gap:3px; }
+  .project--logic .logic-character-buttons { padding:2px; gap:2px; }
+  .project--logic .logic-character-button { min-height:36px; min-width:64px; padding:6px 13px; font-size:10px; gap:6px; }
+  .project--logic .logic-topic { font-size:10px; min-height:14px; }
+  .project--logic .logic-learning-path { font-size:8px; gap:7px; }
+  .project--logic .logic-learning-path i { width:18px; }
+  .project--logic .logic-portrait-fallback { gap:3px; font-size:9px; }
+  .project--logic .logic-portrait-fallback .logic-symbol { font-size:20px; }
+  .project--logic .logic-portrait-fallback small { font-size:5px; letter-spacing:0; }
+}
+@media (max-width:760px) and (max-height:740px) {
+  .project--logic .project-surface { grid-template-rows:44% 56%; }
+  .project--logic .project-copy { padding:10px 18px 12px; }
+  .project--logic .project-local-title { margin-bottom:4px; }
+  .project--logic .project-tags { display:none; }
+  .project--logic .logic-showcase { padding-top:27px; padding-bottom:23px; gap:3px; }
+  .project--logic .logic-selector { gap:2px; }
+  .project--logic .logic-learning-path { font-size:7px; }
+  .project--logic .visual-caption { font-size:6px; bottom:8px; }
+}
+@media (max-height:580px) and (min-width:501px) {
+  .project--logic .project-surface { grid-template-rows:1fr; grid-template-columns:43% 57%; }
+  .project--logic .logic-showcase { padding:42px 12px 44px; gap:7px; }
+  .project--logic .logic-frame { max-height:230px; }
+  .project--logic .project-title.long-title { display:block; font-size:clamp(30px,4.1vw,46px); letter-spacing:-1.8px; }
+  .project--logic .project-tags { display:flex; }
+  .project--logic .project-copy { padding:20px 13px 18px 24px; }
+  .project--logic .project-local-title { margin-bottom:8px; }
+}
+@media (max-height:580px) and (max-width:500px) {
+  .project--logic .project-surface { grid-template-rows:45% 55%; grid-template-columns:1fr; }
+  .project--logic .project-copy { padding:14px 18px; }
+  .project--logic .project-tags { display:flex; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .project--logic .logic-frame-float { transform:none; }
+}

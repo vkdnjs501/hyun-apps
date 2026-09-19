@@ -1,4 +1,4 @@
-/* Hyun-apps 1.0.0 — Progressive, framework-free portfolio controller. */
+/* Hyun-apps 1.1.0 — Progressive, framework-free portfolio controller. */
 (() => {
   'use strict';
 
@@ -15,6 +15,8 @@
   const config = window.HYUN_APPS || {};
   const visuals = window.HYUN_VISUALS || {};
   const ids = new Set();
+  const visited = new Set();
+  const logicControllers = new Map();
   const projects = (Array.isArray(config.projects) ? config.projects : []).filter((p) => {
     if (!p || !/^[a-z0-9][a-z0-9-]*$/i.test(p.id || '') || !p.title || ids.has(p.id)) return false;
     ids.add(p.id);
@@ -58,6 +60,8 @@
   }
   function safeImage(value) {
     if (typeof value !== 'string' || !value.trim()) return '';
+    // Single-file preview contains only packaged raster assets, never user HTML/SVG.
+    if (window.HYUN_STANDALONE && /^data:image\/(webp|png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(value)) return value;
     try {
       const url = new URL(value, location.href);
       if (/^(https:|http:|file:)$/.test(url.protocol)) return url.href;
@@ -92,6 +96,120 @@
     return node;
   }
 
+  /** Read-only illustration preview. No original-game scripts, storage, or progress are loaded. */
+  function mountLogic(project, card, object, caption) {
+    const scene = $('.logic-showcase', object);
+    const members = (Array.isArray(project.characters) ? project.characters : []).slice(0, 3);
+    if (!scene || !members.length) {
+      object.replaceChildren(el('div', 'logic-static-fallback', '✦ 논리탐험대'));
+      return { hydrate() {} };
+    }
+    const cast = $('.logic-cast', scene);
+    const env = $('.logic-environments', scene);
+    const choices = $('.logic-character-buttons', scene);
+    const topic = $('.logic-topic', scene);
+    const status = $('.logic-media-status', scene);
+    const buttons = [], frames = [], portraits = [], rooms = [];
+    const states = members.map(() => ({ portrait: 'idle', room: 'idle' }));
+    let selected = 0;
+    let hydrated = false;
+    topic.id = `${project.id}-character-topic`;
+    const describeMedia = () => {
+      const failed = states[selected].portrait === 'failed';
+      scene.classList.toggle('has-media-error', failed);
+      caption.textContent = failed ? '이미지 없이 보기 · 탐험 시작 가능' : '원본 일러스트를 활용한 소개 연출';
+      status.textContent = failed ? `${members[selected].name}의 그림을 불러오지 못했습니다. 탐험 시작 버튼으로 원본 앱을 열 수 있습니다.` : '';
+    };
+    const loadImage = (index, type) => {
+      if (states[index][type] !== 'idle') return;
+      const image = type === 'portrait' ? portraits[index] : rooms[index];
+      const url = safeImage(members[index][type]);
+      states[index][type] = 'loading';
+      const fail = () => {
+        states[index][type] = 'failed';
+        image.classList.add('is-failed');
+        if (index === selected) describeMedia();
+      };
+      image.addEventListener('load', () => {
+        if (!image.naturalWidth) { fail(); return; }
+        states[index][type] = 'loaded';
+        image.classList.add('is-loaded');
+        if (type === 'portrait') frames[index].classList.add('has-portrait');
+        if (index === selected) describeMedia();
+      }, { once: true });
+      image.addEventListener('error', fail, { once: true });
+      if (url) image.src = url;
+      else fail();
+    };
+    const select = (index, moveFocus = false, announce = true) => {
+      selected = (index + members.length) % members.length;
+      scene.dataset.character = members[selected].id;
+      scene.style.setProperty('--character-accent', color(members[selected].accent));
+      members.forEach((member, i) => {
+        const distance = (i - selected + members.length) % members.length;
+        frames[i].dataset.slot = distance === 0 ? 'center' : distance === 1 ? 'right' : 'left';
+        buttons[i].setAttribute('aria-pressed', String(i === selected));
+        rooms[i].classList.toggle('is-selected', i === selected);
+      });
+      topic.textContent = members[selected].topic;
+      topic.setAttribute('aria-label', `${members[selected].name} — ${members[selected].topic}`);
+      if (hydrated) loadImage(selected, 'room');
+      if (announce) describeMedia();
+      if (moveFocus) buttons[selected].focus({ preventScroll: true });
+    };
+    members.forEach((member, i) => {
+      const room = el('img', 'logic-room');
+      room.alt = ''; room.decoding = 'async'; room.width = room.height = 627;
+      room.draggable = false;
+      rooms.push(room); env.append(room);
+      const frame = el('div', 'logic-frame');
+      frame.dataset.character = member.id;
+      const enter = el('div', 'logic-frame-enter');
+      const floating = el('div', 'logic-frame-float ambient-motion');
+      floating.style.setProperty('--float-delay', `${i * -1.8}s`);
+      const portrait = el('div', 'logic-portrait');
+      const fallback = el('div', 'logic-portrait-fallback');
+      fallback.append(el('span', 'logic-symbol', '✦'), el('span', '', member.name), el('small', '', 'LOGIC EXPEDITION'));
+      const image = el('img', 'logic-portrait-image');
+      image.alt = ''; image.decoding = 'async'; image.width = image.height = 627;
+      image.draggable = false;
+      portrait.append(fallback, image);
+      const label = el('div', 'logic-frame-label');
+      label.append(el('strong', '', member.name), el('span', '', member.role || 'EXPLORE'));
+      floating.append(portrait, label); enter.append(floating); frame.append(enter); cast.append(frame);
+      frames.push(frame); portraits.push(image);
+      const button = el('button', 'logic-character-button');
+      button.type = 'button'; button.dataset.character = member.id;
+      button.tabIndex = -1;
+      button.style.setProperty('--choice-accent', color(member.accent));
+      button.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-label', `${member.name} — ${member.topic}`);
+      button.setAttribute('aria-describedby', topic.id);
+      const dot = el('i'); dot.setAttribute('aria-hidden', 'true');
+      button.append(dot, el('span', '', member.name));
+      button.addEventListener('click', () => select(i));
+      button.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        const key = event.key;
+        if (!['ArrowLeft','ArrowRight','Home','End'].includes(key)) return;
+        event.preventDefault(); event.stopPropagation();
+        const next = key === 'Home' ? 0 : key === 'End' ? members.length - 1 : i + (key === 'ArrowRight' ? 1 : -1);
+        select(next, true);
+      });
+      choices.append(button); buttons.push(button);
+    });
+    select(0, false, false);
+    return {
+      hydrate() {
+        if (hydrated) return;
+        hydrated = true;
+        scene.classList.add('is-hydrated');
+        members.forEach((_, i) => loadImage(i, 'portrait'));
+        loadImage(selected, 'room');
+      }
+    };
+  }
+
   function render() {
     if (!projects.length) {
       const notice = el('div', 'noscript-panel');
@@ -107,6 +225,7 @@
       card.id = `project-${p.id}`;
       card.dataset.projectId = p.id;
       card.dataset.index = String(index);
+      if (p.visual === 'logic') card.classList.add('project--logic');
       card.setAttribute('role', 'group');
       card.setAttribute('aria-roledescription', '슬라이드');
       card.setAttribute('aria-label', `${projects.length}개 중 ${index + 1}. ${p.title}`);
@@ -128,7 +247,7 @@
       const tags = el('div', 'project-tags');
       (Array.isArray(p.tags) ? p.tags : []).slice(0, 4).forEach((tag) => tags.append(el('span', 'project-tag', tag)));
       const actions = el('div', 'project-actions');
-      const launch = externalLink(p.launch, '앱 열기', 'launch-button', `${p.title} 앱 열기, 새 탭`);
+      const launch = externalLink(p.launch, p.launchLabel || '앱 열기', 'launch-button', `${p.title} ${p.launchLabel || '앱 열기'}, 새 탭`);
       const repo = externalLink(p.repository, 'GitHub', 'code-link', `${p.title} 소스코드, 새 탭`, 'code');
       if (launch) actions.append(launch);
       if (repo) actions.append(repo);
@@ -140,9 +259,11 @@
       details.setAttribute('aria-label', `${p.title} 프로젝트 이야기`);
       details.append(el('span', '', '프로젝트 이야기'), el('span', '', '→'));
       copy.append(meta, title, el('p', 'project-subtitle', p.subtitle || ''), el('p', 'project-description', p.description || ''), tags, actions, details);
+      if (p.localTitle) title.after(el('p', 'project-local-title', p.localTitle));
       const stage = el('div', 'art-stage');
-      stage.setAttribute('aria-hidden', 'true');
+      if (p.visual !== 'logic') stage.setAttribute('aria-hidden', 'true');
       const top = el('div', 'art-topline');
+      top.setAttribute('aria-hidden', 'true');
       top.append(el('span', '', 'HYUN-APPS / PROJECT STUDY'), el('span', '', `No. ${pad(index + 1)}`));
       const object = el('div', 'art-object');
       const caption = el('div', 'visual-caption');
@@ -167,7 +288,14 @@
           });
           node.id = replacement;
         });
-        $('.caption-text', caption).textContent = '소개용 모션 비주얼';
+        $$('.art-project-number', object).forEach((number) => { number.textContent = pad(index + 1); });
+        if (knownKey === 'logic') {
+          stage.removeAttribute('aria-hidden');
+          const controller = mountLogic(p, card, object, $('.caption-text', caption));
+          logicControllers.set(p.id, controller);
+          if (current >= 0 && Math.abs(index - current) <= 1) controller.hydrate();
+          $('.caption-text', caption).textContent = '원본 일러스트를 활용한 소개 연출';
+        } else $('.caption-text', caption).textContent = '소개용 모션 비주얼';
       };
       const image = safeImage(p.screenshot);
       if (image) {
@@ -244,12 +372,14 @@
       const active = i === index;
       card.classList.toggle('is-active', active);
       card.classList.remove('is-entering');
-      $$('a,button', $('.project-copy', card)).forEach((control) => { control.tabIndex = active ? 0 : -1; });
+      $$('.project-copy a,.project-copy button,.logic-character-buttons button', card).forEach((control) => { control.tabIndex = active ? 0 : -1; });
+      if (Math.abs(i - index) <= 1) logicControllers.get(projects[i].id)?.hydrate();
       tabs[i].setAttribute('aria-current', active ? 'true' : 'false');
       ambientLayers[i].classList.toggle('is-active', active);
     });
-    if (!reduced) {
-      // Separate frames let entry keyframes restart on a previously visited card.
+    const firstVisit = !visited.has(projects[index].id);
+    visited.add(projects[index].id);
+    if (!reduced && (projects[index].visual !== 'logic' || firstVisit)) {
       requestAnimationFrame(() => { if (current === index) cards[index].classList.add('is-entering'); });
     }
     root.style.setProperty('--accent', color(projects[index].accent));
@@ -403,7 +533,7 @@
     $('#detailNote').textContent = p.note || '이 비주얼은 앱을 소개하기 위한 개념도입니다.';
     const actions = $('#detailActions');
     actions.replaceChildren();
-    const launch = externalLink(p.launch, '앱 열기', 'launch-button', `${p.title} 앱 열기, 새 탭`);
+    const launch = externalLink(p.launch, p.launchLabel || '앱 열기', 'launch-button', `${p.title} ${p.launchLabel || '앱 열기'}, 새 탭`);
     const repo = externalLink(p.repository, 'GitHub', 'code-link', `${p.title} 소스코드, 새 탭`, 'code');
     if (launch) actions.append(launch);
     if (repo) actions.append(repo);
@@ -439,8 +569,8 @@
   $('#nextButton').addEventListener('click', () => go(current + 1));
   $('.brand').addEventListener('click', (event) => { event.preventDefault(); go(0); });
   document.addEventListener('keydown', (event) => {
-    if ($('dialog[open]') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select,[contenteditable="true"]')) return;
-    const focusInCard = !!event.target.closest('.project-copy');
+    if (event.defaultPrevented || $('dialog[open]') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input,textarea,select,[contenteditable="true"]')) return;
+    const focusInCard = !!event.target.closest('.project-copy, .logic-character-buttons');
     if (event.key === 'ArrowRight') { event.preventDefault(); go(current + 1, { focus: focusInCard }); }
     if (event.key === 'ArrowLeft') { event.preventDefault(); go(current - 1, { focus: focusInCard }); }
     if (event.key === 'Home' && track.contains(event.target)) { event.preventDefault(); go(0, { focus: focusInCard }); }
@@ -476,7 +606,7 @@
 
   // Mouse-only drag. Touch is delegated to native scrolling for Safari momentum and pinch zoom.
   track.addEventListener('pointerdown', (event) => {
-    if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a, .project-copy button')) return;
+    if (event.pointerType !== 'mouse' || event.button !== 0 || event.target.closest('a, button, input, select, textarea')) return;
     stopAnimation();
     drag = { id: event.pointerId, startX: event.clientX, startScroll: track.scrollLeft, lastX: event.clientX, lastTime: performance.now(), velocity: 0, moved: false };
   });
@@ -520,6 +650,7 @@
   track.addEventListener('dragstart', (event) => { if (event.target.tagName === 'IMG') event.preventDefault(); });
   track.addEventListener('touchstart', () => { touchStarted = true; stopAnimation(); }, { passive: true });
   track.addEventListener('touchend', () => { touchStarted = false; }, { passive: true });
+  track.addEventListener('touchcancel', () => { touchStarted = false; }, { passive: true });
   track.addEventListener('scroll', scheduleScroll, { passive: true });
 
   // Lightweight eased pointer tilt: runs only during pointer movement/settling, never on touch.
@@ -545,8 +676,9 @@
       tiltX = tiltY = 0;
     }
     const rect = stage.getBoundingClientRect();
-    targetTiltY = ((event.clientX - rect.left) / rect.width - .5) * 8;
-    targetTiltX = -((event.clientY - rect.top) / rect.height - .5) * 6;
+    const logicTilt = stage.closest('.project--logic');
+    targetTiltY = ((event.clientX - rect.left) / rect.width - .5) * (logicTilt ? 4 : 8);
+    targetTiltX = -((event.clientY - rect.top) / rect.height - .5) * (logicTilt ? 4 : 6);
     if (!tiltFrame) tiltFrame = requestAnimationFrame(tiltTick);
   });
   track.addEventListener('pointerleave', () => { targetTiltX = targetTiltY = 0; if (tiltStage && !tiltFrame) tiltFrame = requestAnimationFrame(tiltTick); });
