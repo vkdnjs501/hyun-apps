@@ -1,6 +1,6 @@
-/* Hyun-apps 1.1.0 — exact-path shell + optional on-demand artwork cache. */
+/* Hyun-apps 1.2.0 — exact-path shell + optional on-demand artwork cache. */
 'use strict';
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const BASE = new URL('./', self.location.href);
 const PREFIX = `hyun-apps:${BASE.pathname}:`;
 const CACHE = `${PREFIX}${VERSION}`;

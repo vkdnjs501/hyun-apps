@@ -21,3 +21,18 @@ window.HYUN_VISUALS.logic = `
   <div class="logic-learning-path" aria-label="학습 흐름"><span>이야기</span><i aria-hidden="true"></i><span>개념 탐험</span><i aria-hidden="true"></i><span>내 차례</span></div>
   <p class="logic-media-status sr-only" role="status"></p>
 </div>`;
+
+window.HYUN_VISUALS.dlal = `
+<svg class="dlal-visual" viewBox="0 0 640 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true">
+<defs><filter id="dl-shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity=".24"/></filter><radialGradient id="dl-glow"><stop stop-color="#8fd8c4" stop-opacity=".16"/><stop offset="1" stop-color="#8fd8c4" stop-opacity="0"/></radialGradient></defs>
+<circle cx="332" cy="260" r="208" fill="url(#dl-glow)"/><circle class="dlal-orbit ambient-motion" cx="332" cy="260" r="188" stroke="#8fd8c4" stroke-opacity=".1" stroke-dasharray="3 17"/>
+<text class="art-project-number" x="390" y="448" font-family="Arial,sans-serif" font-size="148" font-weight="700" stroke="#8fd8c4" stroke-opacity=".055">00</text>
+<g filter="url(#dl-shadow)">
+<g class="dlal-crank ambient-motion" style="transform-origin:160px 270px"><circle cx="160" cy="270" r="67" stroke="#dce9e5" stroke-width="5"/><circle cx="160" cy="270" r="52" stroke="#9fb6af" stroke-width="3" stroke-dasharray="4 4"/><circle cx="160" cy="270" r="38" stroke="#738a84" stroke-width="3"/><circle cx="160" cy="270" r="8" fill="#8fd8c4"/><path d="M160 270L207 236M160 270L113 304" stroke="#dce9e5" stroke-width="7" stroke-linecap="round"/><circle cx="211" cy="233" r="8" fill="#dce9e5"/></g>
+<g><circle cx="485" cy="245" r="72" stroke="#dce9e5" stroke-width="4"/><circle cx="485" cy="245" r="63" stroke="#c6d7d2" stroke-width="3"/><circle cx="485" cy="245" r="54" stroke="#b3c7c1" stroke-width="3"/><circle cx="485" cy="245" r="46" stroke="#9eb5ae" stroke-width="3"/><circle cx="485" cy="245" r="38" stroke="#899f99" stroke-width="3"/><circle cx="485" cy="245" r="31" stroke="#748b85" stroke-width="3"/><circle cx="485" cy="245" r="25" stroke="#607771" stroke-width="3"/></g>
+<g class="dlal-derailleur ambient-motion"><path d="M507 292C520 310 522 330 513 349L489 397" stroke="#b9ccc6" stroke-width="7" stroke-linecap="round"/><circle cx="513" cy="349" r="17" fill="#1c2625" stroke="#8fd8c4" stroke-width="3"/><circle cx="489" cy="397" r="18" fill="#1c2625" stroke="#8fd8c4" stroke-width="3"/></g>
+<path d="M160 203C270 197 391 190 485 198C520 207 523 229 520 263C520 315 513 349 489 397C399 405 275 377 160 337C118 326 94 299 94 270C94 238 118 214 160 203Z" stroke="#31423f" stroke-width="10" stroke-linecap="round"/>
+<path class="dlal-chain ambient-motion" d="M160 203C270 197 391 190 485 198C520 207 523 229 520 263C520 315 513 349 489 397C399 405 275 377 160 337C118 326 94 299 94 270C94 238 118 214 160 203Z" stroke="#dbe8e4" stroke-width="5" stroke-linecap="round" stroke-dasharray="3 8"/>
+<g class="dlal-limit-hint ambient-motion"><path d="M553 199V291" stroke="#8fd8c4" stroke-width="1.5" stroke-dasharray="3 6"/><rect x="535" y="178" width="36" height="20" rx="10" fill="#263633" stroke="#8fd8c4" stroke-opacity=".5"/><text x="553" y="192" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#bfe9de">H · L</text></g></g>
+<g><rect x="205" y="105" width="230" height="37" rx="18.5" fill="#222c2a" stroke="#8fd8c4" stroke-opacity=".22"/><circle cx="226" cy="123.5" r="3.5" fill="#8fd8c4"/><text x="241" y="127" font-family="Arial,sans-serif" font-size="9" letter-spacing="1.7" fill="#d7e5e1">3 × 7 DRIVETRAIN · H / L</text></g>
+</svg>`;

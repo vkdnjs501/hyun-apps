@@ -574,3 +574,8 @@ body.reduced-motion .project--logic .logic-frame-float { transform:none; }
 @media (prefers-reduced-motion:reduce) {
   .project--logic .logic-frame-float { transform:none; }
 }
+
+/* DLAL: lightweight 2D drivetrain motion, scoped to the existing card. */
+.dlal-visual{width:100%;height:100%;display:block}.dlal-visual .dlal-crank{animation:dlalCrank 5.2s linear infinite;transform-box:view-box}.dlal-visual .dlal-chain{animation:dlalChain 1.25s linear infinite}.dlal-visual .dlal-derailleur{animation:dlalShift 7s cubic-bezier(.22,.8,.22,1) infinite}.dlal-visual .dlal-limit-hint{animation:dlalHint 7s ease infinite}
+@keyframes dlalCrank{to{transform:rotate(360deg)}}@keyframes dlalChain{to{stroke-dashoffset:-44}}@keyframes dlalShift{0%,28%,78%,100%{transform:translate(0)}40%,66%{transform:translate(-13px,4px)}}@keyframes dlalHint{0%,30%,72%,100%{opacity:.28;transform:translateX(0)}42%,62%{opacity:.92;transform:translateX(-8px)}}
+.project-card:not(.is-active) .dlal-visual .ambient-motion,body.is-hidden .dlal-visual .ambient-motion{animation-play-state:paused!important}body.reduced-motion .dlal-visual .ambient-motion{animation:none!important}@media(prefers-reduced-motion:reduce){.dlal-visual .ambient-motion{animation:none!important}}

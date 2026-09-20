@@ -1,5 +1,5 @@
 /**
- * Hyun-apps 1.1.0 — 이 파일에서 프로젝트를 추가·수정하세요.
+ * Hyun-apps 1.2.0 — 이 파일에서 프로젝트를 추가·수정하세요.
  * 순서 = 카드 순서. id는 영문/숫자/하이픈으로 중복 없이 입력합니다.
  * launch: GitHub Pages 실행 주소, repository: 소스코드 주소.
  * screenshot: 실제 스크린샷을 업로드한 뒤 "./stock-screen.webp"처럼 입력합니다.
@@ -10,7 +10,7 @@
  */
 window.HYUN_APPS = {
   title: 'Hyun-apps',
-  version: '1.1.0',
+  version: '1.2.0',
   github: 'https://github.com/vkdnjs501',
   projects: [
     {
@@ -139,6 +139,26 @@ window.HYUN_APPS = {
       purpose: '이동하는 팝업부스에서도 수리·판매·입금 내역을 모아 보고, 날짜별 작업을 정리하기 위한 웹앱입니다.',
       features: ['수리·판매 내역 정리', '결제 수단별 금액 확인', '날짜별 거래 기록 조회'],
       note: '포트폴리오에는 실제 고객정보나 매출 기록을 포함하지 않습니다. 앱 실행 주소는 저장소 이름 기준의 기본 GitHub Pages 경로입니다.'
+    }    ,
+    {
+      id: 'dlal',
+      title: 'DLAL',
+      displayTitle: ['DLAL'],
+      shortTitle: 'DLAL',
+      category: '3D 정비 학습',
+      categoryEn: 'MECHANICAL LEARNING',
+      subtitle: '돌려보고, 변속하고, 원리를 이해한다.',
+      description: '3×7 구동계를 직접 조작하며\\n디레일러 한계조절의 원리를 이해하는 3D 정비 학습 시뮬레이터.',
+      tags: ['3×7 구동계', 'H/L 한계조절', '3D 시뮬레이션'],
+      accent: '#8fd8c4',
+      visual: 'dlal',
+      screenshot: '',
+      screenshotAlt: 'DLAL 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/DLAL/',
+      repository: 'https://github.com/vkdnjs501/DLAL',
+      purpose: '디레일러 한계조절을 암기하는 대신, 나사 조작이 이동 한계와 실제 체인 위치에 어떤 변화를 만드는지 구동계 전체에서 관찰하도록 만든 정비 학습 시뮬레이터입니다.',
+      features: ['앞 3단 × 뒤 7단 구동계 관찰', '앞·뒤 H/L 한계조절과 변속 결과 비교', '요청 단수와 실제 체인 위치를 분리해 확인'],
+      note: '포트폴리오 카드는 실제 3D 엔진을 불러오지 않습니다. SVG/CSS 2D 구동계 애니메이션으로 프로젝트의 핵심 원리만 가볍게 소개합니다.'
     }
   ]
 };
