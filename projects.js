@@ -1,5 +1,5 @@
 /**
- * Hyun-apps 1.2.0 — 이 파일에서 프로젝트를 추가·수정하세요.
+ * Hyun-apps 1.2.1 — 이 파일에서 프로젝트를 추가·수정하세요.
  * 순서 = 카드 순서. id는 영문/숫자/하이픈으로 중복 없이 입력합니다.
  * launch: GitHub Pages 실행 주소, repository: 소스코드 주소.
  * screenshot: 실제 스크린샷을 업로드한 뒤 "./stock-screen.webp"처럼 입력합니다.
@@ -10,7 +10,7 @@
  */
 window.HYUN_APPS = {
   title: 'Hyun-apps',
-  version: '1.2.0',
+  version: '1.2.1',
   github: 'https://github.com/vkdnjs501',
   projects: [
     {
@@ -154,8 +154,8 @@ window.HYUN_APPS = {
       visual: 'dlal',
       screenshot: '',
       screenshotAlt: 'DLAL 실제 앱 화면',
-      launch: 'https://vkdnjs501.github.io/DLAL/',
-      repository: 'https://github.com/vkdnjs501/DLAL',
+      launch: 'https://vkdnjs501.github.io/Derailleur-Limit-Adjustment-Lab./',
+      repository: 'https://github.com/vkdnjs501/Derailleur-Limit-Adjustment-Lab.',
       purpose: '디레일러 한계조절을 암기하는 대신, 나사 조작이 이동 한계와 실제 체인 위치에 어떤 변화를 만드는지 구동계 전체에서 관찰하도록 만든 정비 학습 시뮬레이터입니다.',
       features: ['앞 3단 × 뒤 7단 구동계 관찰', '앞·뒤 H/L 한계조절과 변속 결과 비교', '요청 단수와 실제 체인 위치를 분리해 확인'],
       note: '포트폴리오 카드는 실제 3D 엔진을 불러오지 않습니다. SVG/CSS 2D 구동계 애니메이션으로 프로젝트의 핵심 원리만 가볍게 소개합니다.'

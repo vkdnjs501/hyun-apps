@@ -126,3 +126,14 @@ README.md               # 이 문서
 
 ## DLAL — v1.2.0
 7번째 프로젝트 DLAL을 추가했습니다. 기존 6개 프로젝트의 ID·링크·문안·상대 순서는 유지합니다. DLAL 카드는 실제 3D 엔진 대신 Inline SVG + CSS 2D 구동계 모션만 사용하며 별도 상세 화면이나 전용 탭을 추가하지 않습니다.
+
+
+## v1.2.1 hotfix — DLAL destination
+
+DLAL 실행 링크의 저장소 경로가 실제 GitHub Pages 주소와 달라 발생하던 404를 수정했습니다.
+
+- 이전: `https://vkdnjs501.github.io/DLAL/`
+- 수정: `https://vkdnjs501.github.io/Derailleur-Limit-Adjustment-Lab./`
+- Repository: `https://github.com/vkdnjs501/Derailleur-Limit-Adjustment-Lab.`
+
+기존 프로젝트 구성과 DLAL 2D 애니메이션에는 변경이 없습니다.
