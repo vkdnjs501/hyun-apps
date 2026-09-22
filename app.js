@@ -1,4 +1,4 @@
-/* Hyun-apps 1.3.1 — Progressive, framework-free portfolio controller. */
+/* Hyun-apps 1.3.2 — Progressive, framework-free portfolio controller. */
 (() => {
   'use strict';
 
@@ -230,7 +230,7 @@
       const surface = el('div', 'project-surface');
       const copy = el('div', 'project-copy');
       const meta = el('div', 'project-meta');
-      meta.append(el('span', 'project-index', pad(index + 1)), el('span', '', p.categoryEn || p.category || 'WEB APPLICATION'));
+      meta.append(el('span', 'project-index', pad(index + 1)), el('span', 'project-category', p.categoryEn || p.category || 'WEB APPLICATION'));
       const title = el('h2', 'project-title');
       const lines = Array.isArray(p.displayTitle) && p.displayTitle.length ? p.displayTitle : [p.title];
       if (lines.some((line) => String(line).length > 6)) title.classList.add('long-title');
@@ -243,6 +243,8 @@
       });
       const tags = el('div', 'project-tags');
       (Array.isArray(p.tags) ? p.tags : []).slice(0, 4).forEach((tag) => tags.append(el('span', 'project-tag', tag)));
+      const heading = el('div', 'project-heading');
+      heading.append(meta, tags);
       const actions = el('div', 'project-actions');
       const launch = externalLink(p.launch, p.launchLabel || '앱 열기', 'launch-button', `${p.title} ${p.launchLabel || '앱 열기'}, 새 탭`);
       const repo = externalLink(p.repository, 'GitHub', 'code-link', `${p.title} 소스코드, 새 탭`, 'code');
@@ -255,7 +257,7 @@
       details.setAttribute('aria-controls', 'detailDialog');
       details.setAttribute('aria-label', `${p.title} 프로젝트 이야기`);
       details.append(el('span', '', '프로젝트 이야기'), el('span', '', '→'));
-      copy.append(meta, title, el('p', 'project-subtitle', p.subtitle || ''), el('p', 'project-description', p.description || ''), tags, actions, details);
+      copy.append(heading, title, el('p', 'project-subtitle', p.subtitle || ''), el('p', 'project-description', p.description || ''), actions, details);
       if (p.localTitle) title.after(el('p', 'project-local-title', p.localTitle));
       const stage = el('div', 'art-stage');
       if (p.visual !== 'logic') stage.setAttribute('aria-hidden', 'true');
@@ -344,7 +346,7 @@
     ambientLayers = $$('.ambient-layer');
     $('#totalHeader').textContent = $('#totalNumber').textContent = pad(projects.length);
     const github = validLink(config.github);
-    if (github) $('.github-link').href = github;
+    if (github) $('.footer-devlog').href = github;
   }
 
   function measure() {

@@ -37,20 +37,12 @@
       <nav class="header-actions" aria-label="사이트 메뉴">
         <button class="text-button index-trigger" id="indexButton" type="button" aria-haspopup="dialog" aria-controls="indexDialog"><span class="grid-icon" aria-hidden="true"></span><span>프로젝트</span><span class="count-chip" id="totalHeader">06</span></button>
         <span class="header-separator" aria-hidden="true"></span>
-        <a class="github-link" href="https://github.com/vkdnjs501" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필, 새 탭"><span>GitHub</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
         <button class="icon-button share-button" id="shareButton" type="button" aria-label="현재 프로젝트 링크 공유" title="현재 프로젝트 링크 공유"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4M6 11H4v10h16V11h-2"/></svg></button>
       </nav>
     </header>
 
-    <section class="intro" aria-labelledby="introTitle">
-      <div class="intro-left">
-        <p class="eyebrow"><span class="signal-dot" aria-hidden="true"></span> THE WEBAPP COLLECTION <span class="slash">/</span> 2026</p>
-        <h1 id="introTitle"><span class="reveal-line"><span>일상의 문제를, <em>작은 앱으로.</em></span></span></h1>
-      </div>
-      <div class="intro-right"><span>현장에서 시작한 아이디어를<br>직접 열어보고 경험해 보세요.</span><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M8 9v22h23m0 0L20 20m11 11L20 40" transform="translate(0 -4)"/></svg></div>
-    </section>
-
     <main class="showcase" id="showcase" tabindex="-1" aria-label="웹앱 프로젝트 모음" aria-roledescription="캐러셀">
+      <h1 class="sr-only">Hyun-apps 웹앱 포트폴리오</h1>
       <div class="project-track" id="projectTrack" tabindex="0" aria-label="프로젝트 카드. 좌우로 넘기거나 화살표 키로 이동하세요."></div>
       <noscript><div class="noscript-panel"><h2>Hyun-apps</h2><p>움직이는 포트폴리오를 보려면 JavaScript를 켜주세요.</p><p><a href="https://github.com/vkdnjs501" target="_blank" rel="noopener noreferrer">GitHub에서 프로젝트 보기 ↗</a></p></div></noscript>
     </main>
@@ -63,8 +55,8 @@
     </section>
 
     <footer class="site-footer">
-      <div class="footer-credit"><span class="footer-copyright">© 2026 Hyun-apps</span><span class="footer-divider" aria-hidden="true">/</span><button class="developer-link" id="developerButton" type="button" aria-haspopup="dialog" aria-controls="developerDialog"><span>Hyun-apps 개발자에 대해 궁금하신가요?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></div>
-      <div class="footer-right"><span class="footer-version">v1.3.1</span><a class="footer-devlog" href="https://github.com/vkdnjs501" target="_blank" rel="noopener noreferrer" aria-label="개발 로그로 이동(깃허브), 새 탭"><span>개발 로그로 이동(깃허브)</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>
+      <div class="footer-credit"><button class="developer-link" id="developerButton" type="button" aria-haspopup="dialog" aria-controls="developerDialog"><span>Hyun-apps 개발자에 대해 궁금하신가요?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button><span class="footer-divider" aria-hidden="true">/</span><span class="footer-copyright">© 2026 Hyun-apps</span></div>
+      <div class="footer-right"><span class="footer-version">v1.3.2</span><a class="footer-devlog" href="https://github.com/vkdnjs501" target="_blank" rel="noopener noreferrer" aria-label="개발 로그로 이동(GitHub Link), 새 탭"><span>개발 로그로 이동(GitHub Link)</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></div>
     </footer>
   </div>
 
