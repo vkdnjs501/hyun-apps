@@ -63,8 +63,8 @@
     </section>
 
     <footer class="site-footer">
-      <span class="footer-credit">© 2026 Hyun-apps <span class="footer-divider">/</span> Built from everyday needs.</span>
-      <div class="footer-right"><span class="footer-version">v1.2.2</span><span class="motion-status" title="기기의 동작 줄이기 설정과 관계없이 모션을 실행합니다."><span class="motion-icon" aria-hidden="true"><i></i><i></i><i></i></span><span id="motionLabel">모션 항상 ON</span></span></div>
+      <div class="footer-credit"><span class="footer-copyright">© 2026 Hyun-apps</span><span class="footer-divider" aria-hidden="true">/</span><button class="developer-link" id="developerButton" type="button" aria-haspopup="dialog" aria-controls="developerDialog"><span>Hyun-apps 개발자에 대해 궁금하신가요?</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button></div>
+      <div class="footer-right"><span class="footer-version">v1.3.0</span><span class="motion-status" title="기기의 동작 줄이기 설정과 관계없이 모션을 실행합니다."><span class="motion-icon" aria-hidden="true"><i></i><i></i><i></i></span><span id="motionLabel">모션 항상 ON</span></span></div>
     </footer>
   </div>
 
@@ -74,6 +74,23 @@
 
   <dialog class="sheet-dialog detail-dialog" id="detailDialog" aria-labelledby="detailTitle">
     <div class="sheet-content"><header class="sheet-header"><div><p class="eyebrow" id="detailCategory">PROJECT NOTES</p><h2 id="detailTitle"></h2></div><button class="icon-button close-dialog" type="button" aria-label="프로젝트 설명 닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></header><p class="detail-purpose" id="detailPurpose"></p><div class="detail-features" id="detailFeatures"></div><p class="detail-note" id="detailNote"></p><div class="detail-actions" id="detailActions"></div><p class="link-disclaimer">실행 주소는 GitHub Pages 기본 경로입니다. 열리지 않으면 해당 저장소의 Pages 공개 설정과 주소를 확인해 주세요.</p></div>
+  </dialog>
+
+  <dialog class="sheet-dialog developer-dialog" id="developerDialog" aria-labelledby="developerTitle" aria-describedby="developerDescription">
+    <div class="sheet-content">
+      <div class="developer-heading"><p class="eyebrow">ABOUT THE DEVELOPER</p><span class="developer-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a6 6 0 0 1 10-4.5M16 13h5v5m0-5-7 7"/></svg></span></div>
+      <h2 id="developerTitle">Hyun seock Son 의 소개링크로 이동합니다</h2>
+      <p id="developerDescription">다음 화면에서 간단한 소개와 상세 CV를 선택하실 수 있습니다.</p>
+      <div class="developer-actions" id="developerEntryActions">
+        <button class="developer-action developer-confirm" id="developerContinue" type="button">이동하기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h16m0 0-6-6m6 6-6 6"/></svg></button>
+        <button class="developer-action developer-cancel close-dialog" type="button" autofocus>취소하기</button>
+      </div>
+      <div class="developer-choices" id="developerChoices" hidden>
+        <a class="developer-document" id="developerIntroduction" href="./assets/손현석_자기소개서.pdf" target="_blank" rel="noopener noreferrer" aria-label="간단한 소개 보기, PDF 새 탭에서 열기"><span class="developer-document-number" aria-hidden="true">01</span><span><strong>간단한 소개 보기</strong><small>자기소개서 · PDF · 1쪽</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        <a class="developer-document" href="./assets/손현석_상세_CV.pdf" target="_blank" rel="noopener noreferrer" aria-label="상세 C.V.보기, PDF 새 탭에서 열기"><span class="developer-document-number" aria-hidden="true">02</span><span><strong>상세 C.V.보기</strong><small>경력과 프로젝트 · PDF · 2쪽</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a>
+        <button class="developer-action developer-cancel close-dialog developer-return" type="button">Hyun-apps으로 돌아가기</button>
+      </div>
+    </div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

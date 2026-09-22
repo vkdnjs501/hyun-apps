@@ -1,4 +1,4 @@
-/* Hyun-apps 1.2.2 — Progressive, framework-free portfolio controller. */
+/* Hyun-apps 1.3.0 — Progressive, framework-free portfolio controller. */
 (() => {
   'use strict';
 
@@ -526,6 +526,20 @@
     if (close) closeDialog(close.closest('dialog'));
   }, true);
   $('#indexButton').addEventListener('click', () => openDialog($('#indexDialog')));
+  $('#developerButton').addEventListener('click', () => {
+    $('#developerTitle').textContent = 'Hyun seock Son 의 소개링크로 이동합니다';
+    $('#developerDescription').textContent = '다음 화면에서 간단한 소개와 상세 CV를 선택하실 수 있습니다.';
+    $('#developerEntryActions').hidden = false;
+    $('#developerChoices').hidden = true;
+    openDialog($('#developerDialog'));
+  });
+  $('#developerContinue').addEventListener('click', () => {
+    $('#developerTitle').textContent = 'Hyun seock Son의 소개';
+    $('#developerDescription').textContent = '원하시는 문서를 선택해 주세요. 각 PDF는 새 탭에서 열립니다.';
+    $('#developerEntryActions').hidden = true;
+    $('#developerChoices').hidden = false;
+    $('#developerIntroduction').focus({ preventScroll: true });
+  });
   $$('dialog').forEach((dialog) => {
     dialog.addEventListener('cancel', (event) => { event.preventDefault(); closeDialog(dialog); });
     dialog.addEventListener('close', syncSuspended);
