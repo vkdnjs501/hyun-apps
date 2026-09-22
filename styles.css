@@ -163,12 +163,11 @@ h1 em { color:#95979a; font-style:normal; font-weight:380; }
 .footer-divider { color:#4e5559; margin:0 10px; }
 .footer-right { display:flex; gap:22px; align-items:center; }
 .footer-version { font:8px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:1.5px; color:#777d81; }
-.motion-button { background:none; display:flex; align-items:center; gap:8px; font-size:9px; color:#a0a5a8; padding:8px 0; min-height:36px; }
+.motion-status { display:flex; align-items:center; gap:8px; font-size:9px; color:#a0a5a8; padding:8px 0; min-height:36px; white-space:nowrap; }
 .motion-icon { display:flex; gap:2px; align-items:center; height:11px; }
 .motion-icon i { width:2px; height:9px; background:#adbcaa; animation:motionBars 1.4s ease-in-out infinite; }
 .motion-icon i:nth-child(2) { animation-delay:-.4s; }
 .motion-icon i:nth-child(3) { animation-delay:-.7s; }
-.motion-button[aria-pressed="true"] .motion-icon i { height:3px; animation:none; }
 .sheet-dialog { width:min(640px,calc(100vw - 36px)); max-height:86vh; max-height:86dvh; padding:0; background:#1a1d20; color:var(--ink); border:1px solid #ffffff20; border-radius:22px; box-shadow:0 28px 150px #000b; overflow:auto; overscroll-behavior:contain; }
 .sheet-dialog::backdrop { background:rgba(5,7,8,.75); backdrop-filter:blur(9px); -webkit-backdrop-filter:blur(9px); }
 .sheet-dialog[open] { animation:sheetIn .4s var(--ease) both; }
@@ -203,9 +202,6 @@ h1 em { color:#95979a; font-style:normal; font-weight:380; }
 .noscript-panel { position:absolute; inset:0; margin:20px var(--gutter); padding:32px; background:#222; border-radius:20px; }
 .noscript-panel a { color:var(--accent); text-decoration:underline; }
 body.is-suspended *,body.is-suspended *::before,body.is-suspended *::after { animation-play-state:paused!important; }
-body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
-body.reduced-motion .project { transform:none!important; }
-body.reduced-motion .art-object,body.reduced-motion .project-title { transform:none!important; }
 @keyframes headlineReveal { from { transform:translateY(105%); opacity:0; } to { transform:none; opacity:1; } }
 @keyframes wordReveal { from { transform:translateY(108%) rotate(3deg); } to { transform:translateY(0) rotate(0); } }
 @keyframes softReveal { from { transform:translateY(12px); opacity:0; } to { transform:none; opacity:1; } }
@@ -340,7 +336,7 @@ body.reduced-motion .art-object,body.reduced-motion .project-title { transform:n
   .site-footer { font-size:8px; gap:8px; }
   .footer-credit { white-space:nowrap; letter-spacing:-.15px; }
   .footer-divider { margin:0 6px; }
-  .motion-button { font-size:8px; gap:6px; }
+  .motion-status { font-size:8px; gap:6px; }
   .sheet-content { padding:24px; }
   .sheet-header h2 { font-size:23px; }
   .detail-purpose { font-size:13px; }
@@ -407,10 +403,6 @@ body.reduced-motion .art-object,body.reduced-motion .project-title { transform:n
   .project-title { display:flex; font-size:36px; margin-top:0; }
   .project-title.long-title { font-size:29px; }
 }
-@media (prefers-reduced-motion:reduce) {
-  *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
-  .art-object,.project-title { transform:none!important; }
-}
 @media print {
   html,body { background:white!important; color:black; height:auto; overflow:visible; }
   .site-shell { display:block; height:auto; }
@@ -430,7 +422,7 @@ body.is-suspended .sheet-dialog *,
 body.is-suspended .sheet-dialog::backdrop { animation-play-state:running!important; }
 body.is-suspended .site-shell .ambient-motion { animation-play-state:paused!important; }
 
-@media (max-width:760px) and (max-height:740px) { .site-footer .motion-button { min-height:28px; padding:5px 0; } }
+@media (max-width:760px) and (max-height:740px) { .site-footer .motion-status { min-height:28px; padding:5px 0; } }
 
 /* ── Hyun-apps 1.1.0 · LOGIC EXPEDITION ───────────────────────
    A living book cover. Original illustration crops, no nested swipe area.
@@ -503,8 +495,6 @@ body.is-suspended .site-shell .ambient-motion { animation-play-state:paused!impo
 @keyframes logicCoverIn { from { opacity:0; transform:translateY(12px) scale(.96); } to { opacity:1; transform:none; } }
 @keyframes logicFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
 @keyframes logicStarlight { 0%,100% { opacity:.18; transform:scale(.7); } 50% { opacity:.8; transform:scale(1.08); } }
-/* The frame poses remain static and fully visible when motion is reduced. */
-body.reduced-motion .project--logic .logic-frame-float { transform:none; }
 @media (min-width:761px) and (max-height:820px) {
   .project--logic .logic-showcase { padding:54px 18px 57px; gap:9px; }
   .project--logic .logic-character-button { padding:7px 14px; min-width:72px; }
@@ -571,11 +561,8 @@ body.reduced-motion .project--logic .logic-frame-float { transform:none; }
   .project--logic .project-copy { padding:14px 18px; }
   .project--logic .project-tags { display:flex; }
 }
-@media (prefers-reduced-motion:reduce) {
-  .project--logic .logic-frame-float { transform:none; }
-}
 
 /* DLAL: lightweight 2D drivetrain motion, scoped to the existing card. */
 .dlal-visual{width:100%;height:100%;display:block}.dlal-visual .dlal-crank{animation:dlalCrank 5.2s linear infinite;transform-box:view-box}.dlal-visual .dlal-chain{animation:dlalChain 1.25s linear infinite}.dlal-visual .dlal-derailleur{animation:dlalShift 7s cubic-bezier(.22,.8,.22,1) infinite}.dlal-visual .dlal-limit-hint{animation:dlalHint 7s ease infinite}
 @keyframes dlalCrank{to{transform:rotate(360deg)}}@keyframes dlalChain{to{stroke-dashoffset:-44}}@keyframes dlalShift{0%,28%,78%,100%{transform:translate(0)}40%,66%{transform:translate(-13px,4px)}}@keyframes dlalHint{0%,30%,72%,100%{opacity:.28;transform:translateX(0)}42%,62%{opacity:.92;transform:translateX(-8px)}}
-.project-card:not(.is-active) .dlal-visual .ambient-motion,body.is-hidden .dlal-visual .ambient-motion{animation-play-state:paused!important}body.reduced-motion .dlal-visual .ambient-motion{animation:none!important}@media(prefers-reduced-motion:reduce){.dlal-visual .ambient-motion{animation:none!important}}
+.project:not(.is-active) .dlal-visual .ambient-motion,body.is-suspended .dlal-visual .ambient-motion{animation-play-state:paused!important}

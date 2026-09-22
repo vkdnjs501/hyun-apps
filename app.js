@@ -1,4 +1,4 @@
-/* Hyun-apps 1.1.0 — Progressive, framework-free portfolio controller. */
+/* Hyun-apps 1.2.2 — Progressive, framework-free portfolio controller. */
 (() => {
   'use strict';
 
@@ -9,9 +9,7 @@
   const track = $('#projectTrack');
   const body = document.body;
   const root = document.documentElement;
-  const pref = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
-  const STORE = 'hyun-apps:motion:v1';
   const config = window.HYUN_APPS || {};
   const visuals = window.HYUN_VISUALS || {};
   const ids = new Set();
@@ -29,8 +27,6 @@
   let settleTimer = 0;
   let toastTimer = 0;
   let resizeFrame = 0;
-  let userPaused = false;
-  let reduced = pref.matches;
   let cards = [];
   let tabs = [];
   let ambientLayers = [];
@@ -43,7 +39,8 @@
   let wheelLockUntil = 0;
   let touchStarted = false;
 
-  try { userPaused = localStorage.getItem(STORE) === 'reduced'; } catch (_) { /* Private/restricted storage. */ }
+  // Motion is always enabled, independently of OS preferences and legacy saved OFF values.
+  // Only offscreen cards, a hidden page, or the showcase behind a dialog are suspended.
 
   /** Render text as text, never as user-supplied HTML. */
   function el(tag, className, text) {
@@ -379,7 +376,7 @@
     });
     const firstVisit = !visited.has(projects[index].id);
     visited.add(projects[index].id);
-    if (!reduced && (projects[index].visual !== 'logic' || firstVisit)) {
+    if (projects[index].visual !== 'logic' || firstVisit) {
       requestAnimationFrame(() => { if (current === index) cards[index].classList.add('is-entering'); });
     }
     root.style.setProperty('--accent', color(projects[index].accent));
@@ -401,8 +398,8 @@
     const width = cards[0].offsetWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
     cards.forEach((card, index) => {
       const distance = clamp((offsets[index] - position) / width, -1.5, 1.5);
-      card.style.setProperty('--parallax', reduced ? '0px' : `${(distance * 35).toFixed(2)}px`);
-      card.style.setProperty('--card-scale', reduced ? '1' : (1 - Math.min(Math.abs(distance), 1) * .028).toFixed(4));
+      card.style.setProperty('--parallax', `${(distance * 35).toFixed(2)}px`);
+      card.style.setProperty('--card-scale', (1 - Math.min(Math.abs(distance), 1) * .028).toFixed(4));
       card.style.setProperty('--card-opacity', String(1 - Math.min(Math.abs(distance), 1) * .37));
     });
     const progress = projects.length === 1 ? 1 : clamp((position / Math.max(1, offsets[offsets.length - 1])) * (1 - 1 / projects.length) + 1 / projects.length, 1 / projects.length, 1);
@@ -445,7 +442,7 @@
       persistHash();
       if (focus) $('.launch-button, .code-link, .details-button', cards[index])?.focus({ preventScroll: true });
     };
-    if (instant || reduced || Math.abs(delta) < 1) { finish(); return; }
+    if (instant || Math.abs(delta) < 1) { finish(); return; }
     const duration = clamp(Math.abs(delta) * .12 + 520, 560, 980);
     const start = performance.now();
     isProgrammatic = true;
@@ -460,28 +457,6 @@
     };
     animationFrame = requestAnimationFrame(step);
   }
-
-  function updateMotion() {
-    reduced = userPaused || pref.matches;
-    body.classList.toggle('reduced-motion', reduced);
-    $('#motionButton').setAttribute('aria-pressed', String(reduced));
-    $('#motionButton').setAttribute('aria-label', pref.matches ? '기기의 동작 줄이기 설정 적용 중' : reduced ? '장식 애니메이션 켜기' : '장식 애니메이션 줄이기');
-    $('#motionLabel').textContent = reduced ? '모션 OFF' : '모션 ON';
-    if (isProgrammatic && reduced) go(nearestIndex(), { instant: true });
-    updateScroll();
-  }
-  $('#motionButton').addEventListener('click', () => {
-    if (pref.matches) {
-      toast('기기의 ‘동작 줄이기’ 설정을 따르고 있어요.');
-      return;
-    }
-    userPaused = !userPaused;
-    try { localStorage.setItem(STORE, userPaused ? 'reduced' : 'full'); } catch (_) { /* Still works for this visit. */ }
-    updateMotion();
-    toast(userPaused ? '장식 애니메이션을 줄였어요.' : '애니메이션을 다시 켰어요.');
-  });
-  if (pref.addEventListener) pref.addEventListener('change', updateMotion);
-  else pref.addListener(updateMotion);
 
   function toast(message) {
     const node = $('#toast');
@@ -508,12 +483,9 @@
       syncSuspended();
       if (after) after();
     };
-    if (reduced) finish();
-    else {
-      // Suspend only the showcase, not the dialog's enter/exit transition.
-      dialog.classList.add('is-closing');
-      setTimeout(finish, 190);
-    }
+    // Suspend only the showcase, not the dialog's enter/exit transition.
+    dialog.classList.add('is-closing');
+    setTimeout(finish, 190);
   }
   function showDetails(index) {
     const p = projects[index];
@@ -667,7 +639,7 @@
     if (Math.abs(targetTiltX - tiltX) + Math.abs(targetTiltY - tiltY) > .018) tiltFrame = requestAnimationFrame(tiltTick);
   }
   track.addEventListener('pointermove', (event) => {
-    if (!finePointer.matches || reduced || drag?.moved || event.pointerType !== 'mouse') return;
+    if (!finePointer.matches || drag?.moved || event.pointerType !== 'mouse') return;
     const stage = event.target.closest('.art-stage');
     if (!stage || !stage.closest('.project').classList.contains('is-active')) return;
     if (tiltStage !== stage) {
@@ -724,11 +696,11 @@
     const index = projects.findIndex((p) => `#${p.id}` === location.hash);
     if (index >= 0) go(index);
   });
-  window.addEventListener('pageshow', () => { measure(); updateScroll(); });
+  window.addEventListener('pageshow', () => { syncSuspended(); measure(); updateScroll(); });
 
   render();
   measure();
-  updateMotion();
+  syncSuspended();
   const initial = projects.findIndex((p) => `#${p.id}` === location.hash);
   go(Math.max(0, initial), { instant: true });
   if ('ResizeObserver' in window && cards[0]) new ResizeObserver(onResize).observe(cards[0]);
