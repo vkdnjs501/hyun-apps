@@ -1,0 +1,143 @@
+/**
+ * Hyun-apps 1.3.5 — 이 파일에서 프로젝트를 추가·수정하세요.
+ * 순서 = 카드 순서. id는 영문/숫자/하이픈으로 중복 없이 입력합니다.
+ * launch: GitHub Pages 실행 주소, repository: 소스코드 주소.
+ * screenshot: 실제 스크린샷을 업로드한 뒤 "./stock-screen.webp"처럼 입력합니다.
+ * 빈 screenshot은 실제 화면 대신 소개용 CSS/SVG 모션 비주얼을 표시합니다.
+ * 저장소 존재는 2026-09-19 공개 GitHub 페이지에서 확인했습니다.
+ * 실행 주소의 실접속은 제작 환경 제한으로 검증하지 못했습니다.
+ * 이 목록은 자동 동기화가 아니라 직접 편집하는 큐레이션 목록입니다.
+ */
+window.HYUN_APPS = {
+  title: 'Hyun-apps',
+  version: '1.3.5',
+  github: 'https://github.com/vkdnjs501',
+  projects: [
+    {
+      id: 'dlal',
+      title: 'DLAL',
+      displayTitle: ['DLAL'],
+      shortTitle: 'DLAL',
+      category: '3D 정비 학습',
+      categoryEn: 'MECHANICAL LEARNING',
+      subtitle: '돌려보고, 변속하고, 원리를 이해한다.',
+      description: '3×7 구동계를 직접 조작하며\\n디레일러 한계조절의 원리를 이해하는 3D 정비 학습 시뮬레이터.',
+      tags: ['3×7 구동계', 'H/L 한계조절', '3D 시뮬레이션'],
+      accent: '#8fd8c4',
+      visual: 'dlal',
+      screenshot: '',
+      screenshotAlt: 'DLAL 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/Derailleur-Limit-Adjustment-Lab./',
+      repository: 'https://github.com/vkdnjs501/Derailleur-Limit-Adjustment-Lab.',
+      purpose: '디레일러 한계조절을 암기하는 대신, 나사 조작이 이동 한계와 실제 체인 위치에 어떤 변화를 만드는지 구동계 전체에서 관찰하도록 만든 정비 학습 시뮬레이터입니다.',
+      features: ['앞 3단 × 뒤 7단 구동계 관찰', '앞·뒤 H/L 한계조절과 변속 결과 비교', '요청 단수와 실제 체인 위치를 분리해 확인'],
+      note: '포트폴리오 카드는 실제 3D 엔진을 불러오지 않습니다. SVG/CSS 2D 구동계 애니메이션으로 프로젝트의 핵심 원리만 가볍게 소개합니다.'
+    },
+    {
+      id: 'bike-fitting',
+      title: 'BIKE FITTING LAB',
+      displayTitle: ['BIKE', 'FITTING'],
+      shortTitle: 'FITTING',
+      category: '자전거 피팅',
+      categoryEn: 'CYCLING TOOLS',
+      subtitle: '나에게 맞는, 라이딩의 시작.',
+      description: '신체 치수와 측정 정보를 바탕으로\n자전거 안장 높이를 살펴보는 피팅 도구.',
+      tags: ['안장 높이', '사진 측정', '자전거'],
+      accent: '#92d7f2',
+      visual: 'fitting',
+      screenshot: '',
+      screenshotAlt: 'BIKE FITTING LAB 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/bike-fitting-lab/',
+      repository: 'https://github.com/vkdnjs501/bike-fitting-lab',
+      purpose: '신체 치수와 자전거 측정 정보를 입력해 안장 높이 조정을 돕는 브라우저 기반 도구입니다.',
+      features: ['신체·자전거 치수 입력', '사진 기반 측정 보조', 'QUICK / PRO 측정 모드'],
+      note: '소개 비주얼은 측정 기능의 개념도이며 실제 측정 결과가 아닙니다. LiDAR 지원이나 전문 피팅 수준의 정확도를 주장하지 않습니다.'
+    },
+    {
+      id: 'bike-pressure',
+      title: 'BIKE PRESSURE LAB',
+      displayTitle: ['BIKE', 'PRESSURE'],
+      shortTitle: 'PRESSURE',
+      category: '공기압 계산',
+      categoryEn: 'CYCLING TOOLS',
+      subtitle: '라이딩 조건을, 공기압으로.',
+      description: '하중과 타이어, 노면 조건을 입력해\n앞·뒤 타이어의 공기압을 참고하는 계산기.',
+      tags: ['앞·뒤 공기압', '프리셋', 'PWA'],
+      accent: '#b9a8ff',
+      visual: 'pressure',
+      screenshot: '',
+      screenshotAlt: 'BIKE PRESSURE LAB 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/bike-pressure-lab/',
+      repository: 'https://github.com/vkdnjs501/bike-pressure-lab',
+      purpose: '하중·타이어·주행 조건을 정리하고, 앞·뒤 공기압의 참고값을 살펴보도록 만든 계산 도구입니다.',
+      features: ['하중·타이어·노면 등 조건 입력', '앞·뒤 공기압 참고값 확인', '자주 쓰는 설정을 프리셋으로 저장'],
+      note: '소개 그래픽은 실제 계산값을 표시하지 않습니다. 실제 사용 시 타이어·림 제조사의 허용 범위를 우선 확인해야 합니다.'
+    },
+    {
+      id: 'stock-lab',
+      title: 'STOCK LAB',
+      displayTitle: ['STOCK', 'LAB'],
+      shortTitle: 'STOCK',
+      category: '현장 운영',
+      categoryEn: 'WORKSHOP TOOLS',
+      subtitle: '복잡한 재고를, 한눈에.',
+      description: '타이어부터 튜브, 체인까지.\n자전거 수리 현장을 위한 재고관리 웹앱.',
+      tags: ['재고관리', '로컬 저장', 'PWA'],
+      accent: '#c7ee87',
+      visual: 'stock',
+      screenshot: '',
+      screenshotAlt: 'STOCK LAB 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/bike-stock-lab/',
+      repository: 'https://github.com/vkdnjs501/bike-stock-lab',
+      purpose: '현장에서 쓰는 부품의 규격과 수량을 빠르게 확인하고, 입고·판매·출고 기록을 한곳에서 관리하기 위해 만든 도구입니다.',
+      features: ['타이어·튜브·체인 규격별 재고 확인', '입고·판매·출고 및 재고조사 기록', '로컬 데이터 보관과 백업·복원'],
+      note: '포트폴리오는 실제 매장 재고를 불러오지 않습니다. 소개 비주얼의 규격·그래픽은 예시입니다.'
+    },
+    {
+      id: 'pt-flow',
+      title: 'PT FLOW',
+      displayTitle: ['PT', 'FLOW'],
+      shortTitle: 'PT FLOW',
+      category: '비파괴검사 학습',
+      categoryEn: 'LEARNING TOOLS',
+      subtitle: '외우는 대신, 흐름으로.',
+      description: '침투탐상 기호를 조합하면,\n처리순서와 이유가 시각적으로 펼쳐집니다.',
+      tags: ['NDT', '기호 조합', '처리순서'],
+      accent: '#f6cb77',
+      visual: 'flow',
+      screenshot: '',
+      screenshotAlt: 'PT FLOW 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/PT_FLOW/',
+      repository: 'https://github.com/vkdnjs501/PT_FLOW',
+      purpose: '침투액·제거방법·현상방법의 기호를 선택하고, 그 조합의 처리순서와 근거를 시각적으로 이해하도록 만든 학습 도구입니다.',
+      features: ['침투액·제거방법·현상방법의 기호 선택', '조합에 따른 처리순서 카드', '단계별 이유와 근거 확인'],
+      note: '포트폴리오의 그래픽은 기호 선택이라는 개념을 소개합니다. 실제 검사 절차나 기술적 판정을 나타내는 도식이 아닙니다.'
+    },
+    {
+      id: 'logic-expedition',
+      title: 'LOGIC EXPEDITION',
+      displayTitle: ['LOGIC', 'EXPEDITION'],
+      localTitle: '논리탐험대',
+      shortTitle: 'LOGIC',
+      category: '인터랙티브 학습',
+      categoryEn: 'INTERACTIVE LEARNING',
+      subtitle: '정답보다 먼저, 생각하는 방법을.',
+      description: '13명의 캐릭터와 함께 이야기를 읽고,\n생각의 근거를 찾아보는 논리 학습 어드벤처.',
+      tags: ['13명 캐릭터', '논리 학습', '생각 노트'],
+      accent: '#d7c2f5',
+      visual: 'logic',
+      screenshot: '',
+      screenshotAlt: '논리탐험대 실제 앱 화면',
+      launch: 'https://vkdnjs501.github.io/LOGIC_EXPEDITION_GAME/',
+      repository: 'https://github.com/vkdnjs501/LOGIC_EXPEDITION_GAME',
+      purpose: '추상적인 논리 개념을 이야기와 캐릭터를 통해 만나도록 만든 학습 도구입니다. 정답만 고르기보다, 근거와 결론을 연결하며 스스로 생각을 정리하는 경험을 담았습니다.',
+      features: ['이야기 — 캐릭터와 함께 질문의 출발점 만나기', '개념 탐험 — 논리·추론의 연결 방식 살펴보기', '내 차례 — 생각을 정리하고 생각 노트 남기기'],
+      note: '캐릭터 표지는 원본 일러스트를 활용한 소개 연출이며 실제 게임 화면이 아닙니다. 포트폴리오는 학습 진도나 생각 노트에 접근하지 않습니다. 실제 학습은 ‘앱 열기’으로 원본 앱에서 진행합니다.',
+      characters: [
+        { id: 'byeoli', name: '별이', topic: '논리의 기본 법칙', role: 'THE GUIDE', accent: '#d7c2f5', portrait: './logic-byeoli-portrait.webp', room: './logic-byeoli-room.webp' },
+        { id: 'danseo', name: '단서', topic: '가설추론·귀추법', role: 'THE EXPLORER', accent: '#f0cb96', portrait: './logic-danseo-portrait.webp', room: './logic-danseo-room.webp' },
+        { id: 'bandi', name: '반디', topic: '반례로 검토하기', role: 'THE CHALLENGER', accent: '#efb6ce', portrait: './logic-bandi-portrait.webp', room: './logic-bandi-room.webp' }
+      ]
+    }
+  ]
+};

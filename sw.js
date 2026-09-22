@@ -1,16 +1,16 @@
-/* Hyun-apps 1.3.4 — versioned assets; never combine old CSS with new markup. */
+/* Hyun-apps 1.3.5 — versioned assets; never combine old CSS with new markup. */
 'use strict';
-const VERSION = '1.3.4';
+const VERSION = '1.3.5';
 // Internal asset identity changes without a public release-number bump.
-const BUILD = 'footer-layout';
+const BUILD = 'project-order-logic';
 const BASE = new URL('./', self.location.href);
 const PREFIX = `hyun-apps:${BASE.pathname}:`;
 const CACHE = `${PREFIX}${VERSION}:${BUILD}`;
 const INDEX = new URL('./index.html', BASE).href;
 const HOME = BASE.href;
 const FILES = [
-  './index.html', `./styles.v${VERSION}.footer.css`, `./projects.v${VERSION}.js`,
-  `./visuals.v${VERSION}.js`, `./app.v${VERSION}.footer.js`,
+  './index.html', `./styles.v${VERSION}.css`, `./projects.v${VERSION}.js`,
+  `./visuals.v${VERSION}.js`, `./app.v${VERSION}.js`,
   './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'
 ];
 // Cache illustrations on demand. PDFs and other apps are outside this allowlist.
