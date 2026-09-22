@@ -1,14 +1,16 @@
 /* Hyun-apps 1.3.4 — versioned assets; never combine old CSS with new markup. */
 'use strict';
 const VERSION = '1.3.4';
+// Internal asset identity changes without a public release-number bump.
+const BUILD = 'footer-layout';
 const BASE = new URL('./', self.location.href);
 const PREFIX = `hyun-apps:${BASE.pathname}:`;
-const CACHE = `${PREFIX}${VERSION}`;
+const CACHE = `${PREFIX}${VERSION}:${BUILD}`;
 const INDEX = new URL('./index.html', BASE).href;
 const HOME = BASE.href;
 const FILES = [
-  './index.html', `./styles.v${VERSION}.css`, `./projects.v${VERSION}.js`,
-  `./visuals.v${VERSION}.js`, `./app.v${VERSION}.js`,
+  './index.html', `./styles.v${VERSION}.footer.css`, `./projects.v${VERSION}.js`,
+  `./visuals.v${VERSION}.js`, `./app.v${VERSION}.footer.js`,
   './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'
 ];
 // Cache illustrations on demand. PDFs and other apps are outside this allowlist.
@@ -20,7 +22,8 @@ const MEDIA = [
 const URLS = FILES.map(file => new URL(file, BASE).href);
 const ASSETS = new Set(URLS.filter(url => url !== INDEX));
 const MEDIA_URLS = new Set(MEDIA.map(file => new URL(file, BASE).href));
-const versionMatches = html => html.includes(`<meta name="hyun-apps-version" content="${VERSION}">`);
+const versionMatches = html => html.includes(`<meta name="hyun-apps-version" content="${VERSION}">`)
+  && html.includes(`<meta name="hyun-apps-build" content="${BUILD}">`);
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
@@ -57,9 +60,12 @@ self.addEventListener('fetch', event => {
   // bypass old workers that stripped queries before looking up styles.css.
   if (!navigation && !ASSETS.has(url.href) && !MEDIA_URLS.has(url.href)) return;
   event.respondWith((async () => {
-    const cache = await caches.open(CACHE);
     const key = navigation ? INDEX : url.href;
-    const cached = await cache.match(key);
+    let cache, cached;
+    try {
+      cache = await caches.open(CACHE);
+      cached = await cache.match(key);
+    } catch (_) { /* Cache access is optional; an online request must still work. */ }
     if (!navigation && cached) return cached;
     try {
       const response = await fetch(request, navigation ? { cache:'no-cache' } : undefined);
@@ -67,7 +73,7 @@ self.addEventListener('fetch', event => {
         // Retain an offline HTML/asset set from one release. A future online HTML
         // response is still returned, but its own worker must cache that release.
         const canCache = !navigation || versionMatches(await response.clone().text());
-        if (canCache) {
+        if (canCache && cache) {
           try { await cache.put(key, response.clone()); } catch (_) { /* Optional cache. */ }
         }
       }
