@@ -1,5 +1,5 @@
 /**
- * Hyun-apps 1.3.0 — 이 파일에서 프로젝트를 추가·수정하세요.
+ * Hyun-apps 1.3.1 — 이 파일에서 프로젝트를 추가·수정하세요.
  * 순서 = 카드 순서. id는 영문/숫자/하이픈으로 중복 없이 입력합니다.
  * launch: GitHub Pages 실행 주소, repository: 소스코드 주소.
  * screenshot: 실제 스크린샷을 업로드한 뒤 "./stock-screen.webp"처럼 입력합니다.
@@ -10,7 +10,7 @@
  */
 window.HYUN_APPS = {
   title: 'Hyun-apps',
-  version: '1.3.0',
+  version: '1.3.1',
   github: 'https://github.com/vkdnjs501',
   projects: [
     {

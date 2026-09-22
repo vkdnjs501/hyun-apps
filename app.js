@@ -1,4 +1,4 @@
-/* Hyun-apps 1.3.0 — Progressive, framework-free portfolio controller. */
+/* Hyun-apps 1.3.1 — Progressive, framework-free portfolio controller. */
 (() => {
   'use strict';
 
